@@ -26,8 +26,9 @@ class Timesheet extends Model {
       },
     }, {
       sequelize,
-      modelName: 'timesheet',
-      timestamps: false,
+      modelName: 'Timesheet',
+      tableName: 'timesheets',
+      timestamps: true,
     })
   }
 }

@@ -27,31 +27,11 @@ class Employee extends Model {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        designation: {
-          type: DataTypes.STRING,
-          allowNull: false,
-        },
-        joinedDate: {
-          type: DataTypes.DATEONLY,
-          allowNull: false,
-        },
-        department: {
-          type: DataTypes.STRING,
-          allowNull: false,
-          references: {
-            model: "departments",
-            key: "id",
-          },
-        },
         nationalId: {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        salary: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-        },
-        status: {
+        isActive: {
           type: DataTypes.BOOLEAN,
           allowNull: false,
           defaultValue: true,
@@ -60,6 +40,11 @@ class Employee extends Model {
           type: DataTypes.STRING,
           allowNull: false,
         },
+        role: {
+          type: DataTypes.ENUM('admin', 'approver', 'general'),
+          allowNull: false,
+          defaultValue: 'general'
+        }
       },
       {
         sequelize,

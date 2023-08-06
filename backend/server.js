@@ -10,6 +10,7 @@ import projectRouter from "./routes/projectRoutes.js";
 import taskRouter from "./routes/taskRoutes.js";
 import commentRouter from "./routes/commentRoutes.js";
 import timesheetRouter from "./routes/timesheetRoutes.js";
+import entryRouter from "./routes/entryRoutes.js";
 
 const PORT = process.env.PORT || 3500;
 const app = express();
@@ -24,6 +25,7 @@ app.use("/api", projectRouter);
 app.use("/api", taskRouter);
 app.use("/api", commentRouter);
 app.use("/api", timesheetRouter);
+app.use("/api", entryRouter);
 
 dotenv.config();
 connectDB();

@@ -17,26 +17,28 @@ class Task extends Model {
         },
         taskDescription: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
         },
         taskStatus: {
-          type: DataTypes.STRING,
+          type: DataTypes.ENUM("in progress", "completed", "on hold", "cancelled"),
           allowNull: false,
+          defaultValue: "on hold",
         },
         taskStartDate: {
           type: DataTypes.DATEONLY,
           allowNull: false,
+          defaultValue: DataTypes.NOW,
         },
         taskEndDate: {
           type: DataTypes.DATEONLY,
-          allowNull: false,
+          allowNull: true,
         },
       },
       {
         sequelize,
         tableName: "tasks",
         modelName: "Task",
-        timestamps: false,
+        timestamps: true,
       }
     );
   }

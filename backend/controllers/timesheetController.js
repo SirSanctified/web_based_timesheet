@@ -106,4 +106,48 @@ export const deleteAllTimesheets = async (req, res) => {
         err.message || "Some error occurred while removing all timesheets.",
     });
   }
+};
+
+export const getTimesheetsByEmployeeId = async (req, res) => {
+  try {
+    const data = await Timesheet.find({
+      where: { employeeId: req.params.id },
+    });
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message:
+        err.message ||
+        "Some error occurred while retrieving timesheets by employee id.",
+    });
+  }
 }
+
+export const getTimesheetEntries = async (req, res) => {
+  try {
+    const timesheet = await Timesheet.find({ where: { id: req.params.id } });
+    const data = await timesheet.getEntries();
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message:
+        err.message ||
+        "Some error occurred while retrieving timesheet entries.",
+    });
+  }
+};
+
+export const getTimesheetComments = async (req, res) => {
+  try {
+    const timesheet = await Timesheet.find({ where: { id: req.params.id } });
+    const data = await timesheet.getComments();
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({
+      message:
+        err.message ||
+        "Some error occurred while retrieving timesheet comments.",
+    });
+  }
+}
+

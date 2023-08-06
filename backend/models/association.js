@@ -3,6 +3,7 @@ import Project from "./project.js";
 import Task from "./task.js";
 import Comment from "./comment.js";
 import Timesheet from "./timesheet.js";
+import Entry from "./entry.js";
 
 // create associations between models.
 // Employee and Project
@@ -53,6 +54,15 @@ Comment.belongsTo(Employee, {
   through: "employee_comments",
 });
 
+// Timesheet and Comment
+
+Timesheet.belongsToMany(Comment, {
+  onDelete: "CASCADE",
+  through: "timesheet_comments",
+});
+
+Comment.belongsTo(Timesheet);
+
 // Employee and Timesheet
 
 Employee.belongsToMany(Timesheet, {
@@ -64,4 +74,44 @@ Timesheet.belongsTo(Employee, {
   through: "employee_timesheets",
 });
 
-export { Employee, Project, Task, Comment, Timesheet };
+// Employee and Entry
+
+Employee.belongsToMany(Entry, {
+  onDelete: "CASCADE",
+  through: "employee_entries",
+});
+
+Entry.belongsTo(Employee, {
+  through: "employee_entries",
+});
+
+// Timesheet and Entry
+
+Timesheet.belongsToMany(Entry, {
+  through: "timesheet_entries",
+  onDelete: "CASCADE",
+});
+
+Entry.belongsTo(Timesheet, {
+  through: "timesheet_entries",
+});
+
+// Entry and Task
+
+Entry.belongsToMany(Task, {
+  through: "entry_tasks",
+  onDelete: "CASCADE",
+});
+
+Task.belongsTo(Entry);
+
+// Entry and Project
+
+Entry.belongsToMany(Project, {
+  through: "entry_projects",
+  onDelete: "CASCADE",
+});
+
+Project.belongsTo(Entry);
+
+export { Employee, Project, Entry, Task, Comment, Timesheet };

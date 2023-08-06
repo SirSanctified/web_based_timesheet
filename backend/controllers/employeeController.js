@@ -10,10 +10,8 @@ export const createEmployee = async (req, res) => {
       lastName,
       email,
       phone,
-      joinedDate,
-      department,
       nationalId,
-      salary,
+      role,
       status,
       password,
     } = req.body;
@@ -26,12 +24,9 @@ export const createEmployee = async (req, res) => {
       lastName,
       email,
       phone,
-      joinedDate,
-      department,
       nationalId,
-      designation,
-      salary,
-      status,
+      role,
+      isActive: status,
       password: hashedPassword,
     });
     res.status(201).json(newEmployee);
@@ -65,13 +60,9 @@ export const updateEmployee = async (req, res) => {
       lastName,
       email,
       phone,
-      joinedDate,
-      department,
       nationalId,
-      designation,
-      salary,
+      role,
       status,
-      projects,
     } = req.body;
 
     const updatedEmployee = await Employee.update(
@@ -80,13 +71,9 @@ export const updateEmployee = async (req, res) => {
         lastName,
         email,
         phone,
-        joinedDate,
-        department,
         nationalId,
-        designation,
-        salary,
-        status,
-        projects,
+        role,
+        isActive: status,
       },
       { where: { id: req.params.id } }
     );

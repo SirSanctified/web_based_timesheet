@@ -22,38 +22,28 @@ class Project extends Model {
         },
         projectDescription: {
           type: DataTypes.STRING,
-          allowNull: false,
-        },
-        projectManager: {
-          type: DataTypes.STRING,
           allowNull: true,
-          // references: {
-          //   model: "employees",
-          //   key: "id",
-          // },
         },
         projectStartDate: {
           type: DataTypes.DATEONLY,
           allowNull: false,
+          defaultValue: DataTypes.NOW,
         },
         projectEndDate: {
           type: DataTypes.DATEONLY,
-          allowNull: false,
+          allowNull: true,
         },
         projectStatus: {
-          type: DataTypes.STRING,
+          type: DataTypes.ENUM("in progress", "completed", "on hold", "cancelled"),
           allowNull: false,
-        },
-        projectBudget: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
+          defaultValue: "on hold",
         },
       },
       {
         sequelize,
         tableName: "projects",
         modelName: "Project",
-        timestamps: false,
+        timestamps: true,
       }
     );
   }

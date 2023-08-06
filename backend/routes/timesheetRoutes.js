@@ -6,6 +6,9 @@ import {
   updateTimesheet,
   deleteTimesheet,
   deleteAllTimesheets,
+  getTimesheetComments,
+  getTimesheetEntries,
+  getTimesheetsByEmployeeId
 } from "../controllers/timesheetController.js";
 
 const timesheetRouter = Router();
@@ -19,6 +22,12 @@ timesheetRouter.route("/timesheets/:id")
   .put(updateTimesheet)
   .delete(deleteTimesheet);
 
-timesheetRouter.delete("/timesheets/deleteAll", deleteAllTimesheets);
+timesheetRouter.delete("/timesheets", deleteAllTimesheets);
+
+timesheetRouter.route("/timesheets/comments/:id").get(getTimesheetComments);
+
+timesheetRouter.route("/timesheets/entries/:id").get(getTimesheetEntries);
+
+timesheetRouter.route("/timesheets/employees/:id").get(getTimesheetsByEmployeeId);
 
 export default timesheetRouter;
