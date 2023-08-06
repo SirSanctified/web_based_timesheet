@@ -7,6 +7,7 @@ import {
   deleteProject,
   getProjectEmployees,
   getProjectTasks,
+  getProjectEntries,
 } from "../controllers/projectController.js";
 
 const projectRouter = Router();
@@ -22,5 +23,7 @@ projectRouter
 projectRouter.route("/projects/:id/employees").get(getProjectEmployees);
 
 projectRouter.route("/projects/:id/tasks").get(getProjectTasks);
+
+projectRouter.route("/projects/:id/entries").get(getProjectEntries);
 
 export default projectRouter;

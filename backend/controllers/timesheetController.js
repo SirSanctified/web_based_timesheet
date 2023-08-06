@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Timesheet } from "../models/association.js";
+import { Timesheet, Entry, Comment } from "../models/association.js";
 import { sequelize } from "../config/db.js";
 
 // Create and Save a new Timesheet
@@ -7,11 +7,11 @@ export const createTimesheet = async (req, res) => {
   // Create a Timesheet
   const timesheet = {
     id: uuidv4(),
-    date: req.body.date,
+    date: Date.parse(req.body.date) || Date.now(),
     hours: req.body.hours,
     employeeId: req.body.employeeId,
     projectId: req.body.projectId,
-    total: req.body.total,
+    entryId: req.body.entryId,
   };
 
   // Save Timesheet in the database
@@ -59,7 +59,7 @@ export const updateTimesheet = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = await Timesheet.update(req.body, {
+    await Timesheet.update(req.body, {
       where: { id: id },
     });
     res.status(200).json({
@@ -77,7 +77,7 @@ export const deleteTimesheet = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = await Timesheet.destroy({
+    await Timesheet.destroy({
       where: { id: id },
     });
     res.status(200).json({
@@ -108,25 +108,9 @@ export const deleteAllTimesheets = async (req, res) => {
   }
 };
 
-export const getTimesheetsByEmployeeId = async (req, res) => {
-  try {
-    const data = await Timesheet.find({
-      where: { employeeId: req.params.id },
-    });
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({
-      message:
-        err.message ||
-        "Some error occurred while retrieving timesheets by employee id.",
-    });
-  }
-}
-
 export const getTimesheetEntries = async (req, res) => {
   try {
-    const timesheet = await Timesheet.find({ where: { id: req.params.id } });
-    const data = await timesheet.getEntries();
+    const data = await Entry.findAll({ where: { timesheetId: req.params.id } });
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -139,8 +123,7 @@ export const getTimesheetEntries = async (req, res) => {
 
 export const getTimesheetComments = async (req, res) => {
   try {
-    const timesheet = await Timesheet.find({ where: { id: req.params.id } });
-    const data = await timesheet.getComments();
+    const data = await Comment.findAll({ where: { timesheetId: req.params.id } });
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -149,5 +132,4 @@ export const getTimesheetComments = async (req, res) => {
         "Some error occurred while retrieving timesheet comments.",
     });
   }
-}
-
+};

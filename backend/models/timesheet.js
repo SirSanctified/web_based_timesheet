@@ -19,10 +19,10 @@ class Timesheet extends Model {
         allowNull: false,
         defaultValue: 0,
       },
-      total: {
-        type: DataTypes.FLOAT,
+      status: {
+        type: DataTypes.ENUM('pending', 'approved', 'rejected'),
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: 'pending',
       },
     }, {
       sequelize,

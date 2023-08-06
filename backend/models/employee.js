@@ -6,7 +6,7 @@ class Employee extends Model {
     return super.init(
       {
         id: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           allowNull: false,
           primaryKey: true,
         },
@@ -26,10 +26,12 @@ class Employee extends Model {
         phone: {
           type: DataTypes.STRING,
           allowNull: false,
+          unique: true
         },
         nationalId: {
           type: DataTypes.STRING,
           allowNull: false,
+          unique: true,
         },
         isActive: {
           type: DataTypes.BOOLEAN,

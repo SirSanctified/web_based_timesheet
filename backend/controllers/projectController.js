@@ -101,3 +101,13 @@ export const getProjectTasks = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const getProjectEntries = async (req, res) => {
+  try {
+    const project = await Project.findOne({ where: { id: req.params.id } });
+    const entries = await project.getEntry();
+    res.status(200).json(entries);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}

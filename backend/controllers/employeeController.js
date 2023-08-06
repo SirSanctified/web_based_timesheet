@@ -17,8 +17,8 @@ export const createEmployee = async (req, res) => {
     } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    await sequelize.sync({ force: true });
-    const newEmployee = await Employee.create({
+    await sequelize.sync({ force: false });
+    const newEmployee = {
       id: uuidv4(),
       firstName,
       lastName,
@@ -27,17 +27,24 @@ export const createEmployee = async (req, res) => {
       nationalId,
       role,
       isActive: status,
+    };
+    await Employee.create({
+      ...newEmployee,
       password: hashedPassword,
     });
     res.status(201).json(newEmployee);
   } catch (error) {
-    res.status(409).json({ message: error.message });
+    res.status(409).json({ message: error });
   }
 };
 
 export const getEmployees = async (req, res) => {
   try {
-    const employees = await Employee.findAll();
+    const employees = await Employee.findAll({
+      attributes: {
+        exclude: ["password"],
+      },
+    });
     res.status(200).json(employees);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -46,7 +53,11 @@ export const getEmployees = async (req, res) => {
 
 export const getEmployeeById = async (req, res) => {
   try {
-    const employee = await Employee.findOne({ where: { id: req.params.id } });
+    const employee = await Employee.findByPk(req.params.id, {
+      attributes: {
+        exclude: ["password"],
+      },
+    });
     res.status(200).json(employee);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -55,29 +66,23 @@ export const getEmployeeById = async (req, res) => {
 
 export const updateEmployee = async (req, res) => {
   try {
-    const {
+    const { firstName, lastName, email, phone, nationalId, role, isActive } =
+      req.body;
+
+    const updatedEmployee = {
       firstName,
       lastName,
       email,
       phone,
       nationalId,
       role,
-      status,
-    } = req.body;
-
-    const updatedEmployee = await Employee.update(
-      {
-        firstName,
-        lastName,
-        email,
-        phone,
-        nationalId,
-        role,
-        isActive: status,
-      },
+      isActive,
+    }
+    await Employee.update(
+      updatedEmployee,
       { where: { id: req.params.id } }
     );
-    res.status(200).json(updatedEmployee);
+    res.status(200).json({...updatedEmployee, id: req.params.id});
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -120,5 +125,4 @@ export const getEmployeeTimesheets = async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
-}
-
+};

@@ -70,7 +70,7 @@ export async function deleteEntry(req, res) {
 export async function deleteAllEntries(req, res) {
   try {
     await Entry.destroy({ where: {} });
-    res.status(204);
+    return res.status(204);
   } catch (err) {
     res
       .status(400)
