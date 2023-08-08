@@ -111,21 +111,6 @@ Timesheet.belongsTo(Employee, {
   otherKey: "timesheetId",
 });
 
-// Employee and Entry
-
-Employee.belongsToMany(Entry, {
-  through: "employee_entries",
-  foreignKey: "entryId",
-  otherKey: "employeeId",
-  onDelete: "CASCADE"
-});
-
-Entry.belongsTo(Employee, {
-  through: "employee_entries",
-  foreignKey: "employeeId",
-  otherKey: "entryId",
-});
-
 // Timesheet and Entry
 
 Timesheet.belongsToMany(Entry, {
@@ -143,32 +128,33 @@ Entry.belongsTo(Timesheet, {
 
 // Entry and Task
 
-Entry.belongsToMany(Task, {
-  through: "entry_tasks",
-  foreignKey: "taskId",
-  otherKey: "entryId",
-  onDelete: "CASCADE"
-});
-
-Task.belongsTo(Entry, {
+Task.belongsToMany(Entry, {
   through: "entry_tasks",
   foreignKey: "entryId",
   otherKey: "taskId",
-});
-
-// Entry and Project
-
-Entry.belongsToMany(Project, {
-  through: "entry_projects",
-  foreignKey: "projectId",
-  otherKey: "entryId",
   onDelete: "CASCADE"
 });
 
-Project.belongsTo(Entry, {
-  through: "entry_projects",
+Entry.belongsTo(Task, {
+  through: "entry_tasks",
+  foreignKey: "taskId",
+  otherKey: "entryId",
+});
+
+
+// Entry and Project
+
+Project.belongsToMany(Entry, {
+  through: "project_entries",
   foreignKey: "entryId",
   otherKey: "projectId",
+  onDelete: "CASCADE"
+});
+
+Entry.belongsTo(Project, {
+  through: "entry_projects",
+  foreignKey: "projectId",
+  otherKey: "entryId",
 });
 
 export { Employee, Project, Entry, Task, Comment, Timesheet };

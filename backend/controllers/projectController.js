@@ -105,7 +105,7 @@ export const getProjectTasks = async (req, res) => {
 export const getProjectEntries = async (req, res) => {
   try {
     const project = await Project.findOne({ where: { id: req.params.id } });
-    const entries = await project.getEntry();
+    const entries = await project.getEntries();
     res.status(200).json(entries);
   } catch (error) {
     res.status(404).json({ message: error.message });

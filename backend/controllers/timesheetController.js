@@ -12,6 +12,7 @@ export const createTimesheet = async (req, res) => {
     employeeId: req.body.employeeId,
     projectId: req.body.projectId,
     entryId: req.body.entryId,
+    
   };
 
   // Save Timesheet in the database

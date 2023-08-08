@@ -103,3 +103,14 @@ export const getTaskComments = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const getTaskEntries = async (req, res) => {
+  try {
+    const task = await Task.findOne({ where: { id: req.params.id } });
+    const comments = await task.getEntries();
+    res.status(200).json(comments);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+

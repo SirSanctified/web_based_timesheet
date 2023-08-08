@@ -42,6 +42,14 @@ class Employee extends Model {
           type: DataTypes.STRING,
           allowNull: false,
         },
+        refreshToken: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        resetToken: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
         role: {
           type: DataTypes.ENUM('admin', 'approver', 'general'),
           allowNull: false,
