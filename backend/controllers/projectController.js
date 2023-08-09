@@ -12,7 +12,7 @@ export const createProject = async (req, res) => {
       projectEndDate,
       projectStatus,
     } = req.body;
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     const newProject = await Project.create({
       id: uuidv4(),
       projectName,

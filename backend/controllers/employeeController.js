@@ -3,41 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import { sequelize } from "../config/db.js";
 
-export const createEmployee = async (req, res) => {
-  try {
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      nationalId,
-      role,
-      status,
-      password,
-    } = req.body;
-
-    const hashedPassword = await bcrypt.hash(password, 12);
-    await sequelize.sync({ force: false });
-    const newEmployee = {
-      id: uuidv4(),
-      firstName,
-      lastName,
-      email,
-      phone,
-      nationalId,
-      role,
-      isActive: status,
-    };
-    await Employee.create({
-      ...newEmployee,
-      password: hashedPassword,
-    });
-    res.status(201).json(newEmployee);
-  } catch (error) {
-    res.status(409).json({ message: error });
-  }
-};
-
 export const getEmployees = async (req, res) => {
   try {
     const employees = await Employee.findAll({

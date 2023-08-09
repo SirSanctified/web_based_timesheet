@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
-import nodemailer from "nodemailer";
-import Employee from "../models/association.js";
+import { transporter } from "../utils/index.js";
+import { Employee } from "../models/association.js";
+import { sequelize } from "../config/db.js";
+
 
 dotenv.config();
 
@@ -11,33 +13,42 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const existingEmployee = await Employee.findOne({ email });
+    const existingEmployee = await Employee.findOne({ where: { email }, raw: true, attributes: { exclude: ["refreshToken", "resetToken"] } });
 
     if (!existingEmployee)
       return res.status(404).json({ message: "Employee doesn't exist." });
-
-    const isPasswordCorrect = await bcrypt.compare(
+   
+      const isPasswordCorrect = await bcrypt.compare(
       password,
       existingEmployee.password
     );
 
     if (!isPasswordCorrect)
-      return res.status(400).json({ message: "Invalid credentials." });
+      return res.status(401).json({ message: "Invalid credentials." });
 
     const accessToken = jwt.sign(
-      { email: existingEmployee.email, id: existingEmployee.id },
+      {
+        email: existingEmployee.email,
+        id: existingEmployee.id,
+        role: existingEmployee.role,
+      },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "10m" }
     );
 
     const refreshToken = jwt.sign(
-      { email: existingEmployee.email, id: existingEmployee.id },
-      process.env.REFRESH_TOKEN_SECRET
+      {
+        email: existingEmployee.email,
+        id: existingEmployee.id,
+        role: existingEmployee.role,
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: "1d"}
     );
 
     await Employee.update(
       { refreshToken },
-      { where: { id: existingEmployee.id } }
+      { where: { email } }
     );
 
     // set http only cookie with refresh token
@@ -50,7 +61,7 @@ export const login = async (req, res) => {
 
     res.status(200).json({ ...existingEmployee, token: accessToken });
   } catch (error) {
-    res.status(401).json({ message: "Invalid credentials" });
+    res.status(401).json({ message: error.message || "Invalid credentials" });
   }
 };
 
@@ -69,7 +80,7 @@ export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
-    const existingEmployee = await Employee.findAll({ where: { email } });
+    const existingEmployee = await Employee.findOne({ where: { email } });
 
     if (!existingEmployee)
       return res.status(404).json({ message: "Employee doesn't exist." });
@@ -82,18 +93,13 @@ export const forgotPassword = async (req, res) => {
       process.env.RESET_TOKEN_SECRET,
       { expiresIn: "30m" }
     );
-    
-    await Employee.update({ resetToken }, { where: { id: existingEmployee.id } });
+
+    await Employee.update(
+      { resetToken },
+      { where: { id: existingEmployee.id } }
+    );
 
     const actionUrl = `http://localhost:3000/reset-password/${existingEmployee.id}/${resetToken}`;
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_ADDRESS,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
 
     const mailOptions = {
       from: process.env.EMAIL_ADDRESS,
@@ -116,24 +122,22 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const { email, password } = req.body;
+  const { password } = req.body;
+  const { token, id } = req.params;
 
   try {
-    const existingEmployee = await Employee.findOne({ email });
+    // check if token has expired
+
+    const foundToken = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
+
+    const existingEmployee = await Employee.findByPk(id);
 
     if (!existingEmployee)
       return res.status(404).json({ message: "Employee doesn't exist." });
 
-    // check if the token is valid
-
-    const foundToken = jwt.verify(
-      req.params.token,
-      process.env.RESET_TOKEN_SECRET
-    );
-
     if (!foundToken) return res.status(401).json({ message: "Invalid token." });
 
-    // if received token hasn' expired and is similar to the one in the database, update the password
+    // if received token hasn't expired and is similar to the one in the database, update the password
 
     if (foundToken.id === existingEmployee.id) {
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -141,6 +145,23 @@ export const resetPassword = async (req, res) => {
         { password: hashedPassword, resetToken: null, refreshToken: null },
         { where: { id: existingEmployee.id } }
       );
+
+      const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to: existingEmployee.email,
+        subject: "Password Reset Successful",
+        text: `Your password has been reset successfully. If you didn't request this, please contact your administrator.`,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log(error);
+          throw new Error(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+
       res.status(200).json({ message: "Password updated successfully." });
     } else {
       throw new Error("Invalid token.");
@@ -153,15 +174,12 @@ export const resetPassword = async (req, res) => {
 export const register = async (req, res) => {
   const { email, password, firstName, lastName, role, nationalId, phone } =
     req.body;
-  const { projects, tasks, timesheets } = req.body;
-
-  const { adminId } = req.body;
 
   try {
-    // if the person trying to register is not an admin, return an error
+    // if the person trying to register is not an admin, return an error.
+    // get user role from the token
 
-    const user = Employee.findById(adminId);
-    if (user.role !== "admin") {
+    if (req.user.role !== "admin") {
       return res
         .status(401)
         .json({ message: "You are not authorized to register new employees." });
@@ -181,18 +199,30 @@ export const register = async (req, res) => {
       phone,
       id: uuidv4(),
     };
-
+    await sequelize.sync({ force: false });
     const result = await Employee.create({
       ...newEmployee,
       password: hashedPassword,
     });
 
-    if (timesheets) await Employee.addTimesheets(timesheets);
-    if (projects) await Employee.addProjects(projects);
-    if (tasks) await Employee.addTasks(tasks);
+    const mailOptions = {
+      from: process.env.EMAIL_ADDRESS,
+      to: newEmployee.email,
+      subject: "Account Created",
+      text: `Your account has been created successfully. Please contact your administrator to get your password.`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        throw new Error(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
 
     res.status(201).json(result);
   } catch (err) {
-    res.status(500).json({ message: "Something went wrong." });
+    res.status(500).json({ message: err.message || "Something went wrong." });
   }
 };

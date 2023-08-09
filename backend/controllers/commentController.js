@@ -4,11 +4,14 @@ import { sequelize } from "../config/db.js";
 
 export const createComment = async (req, res) => {
   try {
-    const { content } = req.body;
-    await sequelize.sync({ force: true });
+    const { content, taskId, timesheetId } = req.body;
+    await sequelize.sync({ force: false });
     const newComment = await Comment.create({
       id: uuidv4(),
       content,
+      employeeId: req.user.id,
+      taskId: taskId || null,
+      timesheetId: timesheetId || null,
     });
     res.status(201).json(newComment);
   } catch (error) {

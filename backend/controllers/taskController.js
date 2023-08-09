@@ -10,8 +10,11 @@ export const createTask = async (req, res) => {
       taskStartDate,
       taskEndDate,
       taskStatus,
+      projectId,
+      entries,
+      employees,
     } = req.body;
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     const newTask = await Task.create({
       id: uuidv4(),
       taskName,
@@ -19,8 +22,12 @@ export const createTask = async (req, res) => {
       taskStartDate,
       taskEndDate,
       taskStatus,
+      projectId,
     });
-    res.status(201).json(newTask);
+
+    if (employees) await Task.addEmployees();
+    if (entries) await Task.addEntries();
+    res.status(201).json({ ...newTask, employees, entries });
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
@@ -54,14 +61,11 @@ export const updateTask = async (req, res) => {
       taskEndDate,
       taskStatus,
       taskProject,
-      taskComments,
     } = req.body;
     const updatedTask = await Task.update(
       {
         taskName,
         taskDescription,
-        taskComments,
-        employees: taskEmployees,
         taskStartDate,
         taskEndDate,
         taskStatus,
@@ -69,6 +73,10 @@ export const updateTask = async (req, res) => {
       },
       { where: { id: req.params.id } }
     );
+    if (taskEmployees) {
+      const task = await Task.findByPk(req.params.id);
+      await task.addEmployees(taskEmployees);
+    }
     res.status(200).json(updatedTask);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -113,4 +121,3 @@ export const getTaskEntries = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-

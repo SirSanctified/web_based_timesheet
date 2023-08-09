@@ -5,19 +5,18 @@ import { sequelize } from "../config/db.js";
 // Create and Save a new Timesheet
 export const createTimesheet = async (req, res) => {
   // Create a Timesheet
+  if (!req.body.employeeId)
+    return res.status(400).json({ error: "Employee required" });
   const timesheet = {
     id: uuidv4(),
     date: Date.parse(req.body.date) || Date.now(),
     hours: req.body.hours,
     employeeId: req.body.employeeId,
-    projectId: req.body.projectId,
-    entryId: req.body.entryId,
-    
   };
 
   // Save Timesheet in the database
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     const data = await Timesheet.create(timesheet);
     res.status(201).json(data);
   } catch (err) {
@@ -58,11 +57,15 @@ export const getTimesheetById = async (req, res) => {
 // Update a Timesheet by the id in the request
 export const updateTimesheet = async (req, res) => {
   const id = req.params.id;
+  const { date, hours, projectId, entryId } = req.body;
 
   try {
-    await Timesheet.update(req.body, {
-      where: { id: id },
-    });
+    await Timesheet.update(
+      { date, hours, projectId, entryId },
+      {
+        where: { id: id },
+      }
+    );
     res.status(200).json({
       message: "Timesheet was updated successfully.",
     });
@@ -124,7 +127,9 @@ export const getTimesheetEntries = async (req, res) => {
 
 export const getTimesheetComments = async (req, res) => {
   try {
-    const data = await Comment.findAll({ where: { timesheetId: req.params.id } });
+    const data = await Comment.findAll({
+      where: { timesheetId: req.params.id },
+    });
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -132,5 +137,25 @@ export const getTimesheetComments = async (req, res) => {
         err.message ||
         "Some error occurred while retrieving timesheet comments.",
     });
+  }
+};
+
+export const approveTimesheet = async (req, res) => {
+  if (!["approver", "admin"].includes(req.user.role))
+    return res.status(403).json({ message: "Forbidden" });
+
+  try {
+    const timesheet = await Timesheet.findByPk(req.params.id);
+
+    if (timesheet.employeeId === req.user.id)
+      return res.status(403).json({ message: "Forbidden" });
+
+    timesheet["status"] = req.body.status;
+    await timesheet.save();
+    res.status(200).json({ message: "Timesheet successifully approved!" });
+  } catch (error) {
+    res
+      .status(409)
+      .json({ error: error.message || "Cannot approve timesheet." });
   }
 };

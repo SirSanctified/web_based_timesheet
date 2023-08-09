@@ -8,20 +8,22 @@ import {
   deleteAllTimesheets,
   getTimesheetComments,
   getTimesheetEntries,
+  approveTimesheet,
 } from "../controllers/timesheetController.js";
 
 const timesheetRouter = Router();
 
 timesheetRouter.route("/timesheets")
   .get(getTimesheets)
-  .post(createTimesheet);
+  .post(createTimesheet)
+  .delete(deleteAllTimesheets);
 
 timesheetRouter.route("/timesheets/:id")
   .get(getTimesheetById)
   .put(updateTimesheet)
   .delete(deleteTimesheet);
 
-timesheetRouter.delete("/timesheets", deleteAllTimesheets);
+timesheetRouter.route("/timesheets/approve/:id").put(approveTimesheet);
 
 timesheetRouter.route("/timesheets/comments/:id").get(getTimesheetComments);
 

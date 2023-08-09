@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 export const createEntry = async (req, res) => {
   const { date, hours, timesheetId, taskId, projectId } = req.body;
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     await Entry.create({
       id: uuidv4(),
       date,
