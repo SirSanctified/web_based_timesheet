@@ -1,59 +1,84 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Link, useLoaderData } from "react-router-dom";
-import { getAllTimesheets } from "../../api";
-import StatsCard from "../../components/StatsCard";
+import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
-  const timesheets = useLoaderData();
   return (
     <section className="mt-[5rem] px-[2rem]">
-      <h1 className="text-blue-950 font-bold text-2xl underline">
+      <h1 className="text-blue-950 font-bold text-2xl underline text-center">
         Admin Dashboard
       </h1>
-      <p className="mt-2">Welcome to the admin dashboard!</p>
-      <div className="mt-4 flex flex-wrap gap-[1rem]">
-        <StatsCard stateName="timesheets" stateValue={timesheets?.length} color="orange" />
-        <StatsCard stateName="Employees" stateValue={timesheets?.length} color="steelblue" />
-        <StatsCard stateName="Projects" stateValue={timesheets?.length} color="green" />
-        <StatsCard stateName="Tasks" stateValue={timesheets?.length} color="yellow" />
-      </div>
-      <h3 className="mt-8 text-lg text-center font-semibold">
-        Timesheets 
-      </h3>
-      <table className="w-full border rounded">
-        <thead>
-          <tr className="border bg-blue-200">
-            <th className="text-center px-2 py-4">Name</th>
-            <th className="text-center px-2 py-4">Description</th>
-            <th className="text-center px-2 py-4">Manager</th>
-            <th className="text-center px-2 py-4">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {timesheets?.map((timesheet) => (
-            <tr key={timesheet.id}>
-              <td className="text-center border-r p-2">{timesheet.timesheetName}</td>
-              <td className="text-center border-r p-2">{timesheet.timesheetDescription}</td>
-              <td className="text-center border-r p-2">{timesheet.timesheetManager}</td>
-              <td className="text-center border-r p-2">
-                <Link to={`/dashboard/timesheets/${timesheet.id}`}>
-                  <button className="bg-blue-800 text-white px-2 py-1 rounded-sm">
-                    View
-                  </button>
-                </Link>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <p className="mt-2 text-center">Welcome to the admin dashboard!</p>
+      <article className="mt-[2rem] w-100 md:w-[60%] lg:w-[50%] border border-gray-400 mx-auto">
+        <div className="flex items-center justify-between gap-1  md:gap-4 border-gray-500 border">
+          <h1 className="text-lg text-blue-950 p-3 ">Timesheets</h1>
+          <div className="flex flex-wrap gap-1 lg:gap-4 w-fit border-l border-l-gray-500 px-2 py-2 items-center">
+            <Link to={'/timesheets/add'} className="bg-blue-700 text-white px-2 md:px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              Add
+            </Link>
+            <Link to={'/timesheets/all/'} className="bg-gray-700 text-white px-2 md:px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              View
+            </Link>
+            <Link to={'timesheets/approve/'} className="bg-green-700 text-white px-2 md:px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              Approve
+            </Link>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-1  md:gap-4  border-gray-500 border">
+          <h1 className="text-lg text-blue-950 p-3 ">Employees</h1>
+          <div className="flex flex-wrap gap-1 lg:gap-4 w-fit border-l border-l-gray-500 px-2  py-2">
+            <Link to={'/employees/add/'} className="bg-blue-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              Add
+            </Link>
+            <Link to={'/employees/all/'} className="bg-gray-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              View
+            </Link>
+          </div>
+        </div>
+        <div className="flex items-center justify-between  gap-1  md:gap-4 border-gray-500 border">
+          <h1 className="text-lg text-blue-950 p-3 ">Projects</h1>
+          <div className="flex flex-wrap gap-1 lg:gap-4 w-fit border-l border-l-gray-500 px-2 py-2">
+            <Link to={'/projects/add/'} className="bg-blue-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              Add
+            </Link>
+            <Link to={'/projects/all/'} className="bg-gray-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              View
+            </Link>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-1  md:gap-4 border-gray-500 border">
+          <h1 className="text-lg text-blue-950 p-3 ">Tasks</h1>
+          <div className="flex flex-wrap gap-1 lg:gap-4 w-fit border-l border-l-gray-500 px-2 py-2">
+            <Link to={'/tasks/add/'} className="bg-blue-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              Add
+            </Link>
+            <Link to={'/tasks/all/'} className="bg-gray-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              View
+            </Link>
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-1  md:gap-4 border-gray-500 border">
+          <h1 className="text-lg text-blue-950 p-3 ">Entries</h1>
+          <div className="flex flex-wrap gap-1 lg:gap-4 w-fit border-l border-l-gray-500 px-2 py-2">
+            <Link to={'/entries/add/'} className="bg-blue-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              Add
+            </Link>
+            <Link to={'/entries/all/'} className="bg-gray-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              View
+            </Link>
+          </div>
+        </div>
 
+        <div className="flex items-center justify-between gap-1  md:gap-4 border-gray-500 border">
+          <h1 className="text-lg text-blue-950 p-3 ">Comments</h1>
+          <div className="flex flex-wrap gap-1 lg:gap-4 w-fit border-l border-l-gray-500 px-2 py-2">
+            <Link to={'/comments/all/'} className="bg-gray-700 text-white px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
+              View
+            </Link>
+          </div>
+        </div>
+      </article>
     </section>
   );
-};
-
-export const loader = async () => {
-  const timesheets = await getAllTimesheets();
-  return timesheets;
 };
 
 export default AdminDashboard;

@@ -59,7 +59,7 @@ export const login = async (req, res) => {
       secure: true,
     });
 
-    res.status(200).json({ ...existingEmployee, token: accessToken });
+    res.status(200).json({ user: existingEmployee, token: accessToken });
   } catch (error) {
     res.status(401).json({ message: error.message || "Invalid credentials" });
   }
@@ -199,7 +199,6 @@ export const register = async (req, res) => {
       phone,
       id: uuidv4(),
     };
-    await sequelize.sync({ force: false });
     const result = await Employee.create({
       ...newEmployee,
       password: hashedPassword,

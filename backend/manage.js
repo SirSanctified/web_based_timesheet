@@ -4,7 +4,7 @@ import { Employee } from "./models/association.js";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
+import { connectDB, sequelize } from "./config/db.js";
 import * as readline from "node:readline/promises"; // This uses the promise-based APIs
 import { stdin as input, stdout as output } from "node:process";
 import {
@@ -56,7 +56,7 @@ const createAdmin = async () => {
         role,
         id,
       };
-
+      await sequelize.sync({ force: false})
       await Employee.create({
         ...newAdmin,
         password: hashedPassword,
