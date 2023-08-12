@@ -1,55 +1,188 @@
-import { Form, redirect, useActionData, useLoaderData } from "react-router-dom";
-import { getAllEmployees, insertTimesheet } from "../../api";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getAllTimesheets, insertEntry, getAllProjects, getAllTasks } from "../../api";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const AddEntry = () => {
-  const errors = useActionData();
-  const employees = useLoaderData();
+  const [errors, setErrors] = useState({});
+  const [timesheets, setTimesheets] = useState([]);
+  const [timesheetId, setTimesheetId] = useState(null);
+  const [tasks, setTasks] = useState([]);
+  const [taskId, setTaskId] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [projectId, setProjectId] = useState(null);
+  const [date, setDate] = useState("");
+  const [hours, setHours] = useState(0);
+  const axioPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      const allTimesheets = await getAllTimesheets(axioPrivate);
+      const allProjects = await getAllProjects(axioPrivate);
+      const allTasks = await getAllTasks(axioPrivate);
+      setTimesheets(allTimesheets);
+      setProjects(allProjects);
+      setTasks(allTasks);
+    })();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const errors = {};
+
+    // validate the fields
+    if (!timesheetId) {
+      errors.timesheetId = "The timesheet must belong to an timesheet";
+    }
+
+    if (!date) {
+      errors.date = "The date is required for this timesheet";
+    }
+
+    if (!hours) {
+      errors.hours = "The hours are required for this timesheet";
+    } else if (typeof hours !== "number") {
+      errors.hours = "Hours should be a number";
+    }
+
+    // return data if we have errors
+    if (Object.keys(errors).length) {
+      setErrors(errors);
+    }
+    // otherwise create the timesheet and redirect
+    const response = await insertEntry(axioPrivate, {
+      timesheetId,
+      date,
+      hours,
+    });
+    if (response?.error) {
+      errors.form = "Something went wrong, please try again";
+    } else {
+      navigate(-1);
+    }
+  };
+
   return (
     <main className="px-8 pt-16">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
-        Create New Timesheet
+        Create New Entry
       </h1>
-      <Form method="POST" className="md:w-[50%] w-full mx-auto">
+      <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="employeeId" className="text-[18px] mb-1">
-            Timesheet For:
+          <label htmlFor="timesheetId" className="text-[18px] mb-1">
+            Entry For Timesheet:
           </label>
           <select
-            name="employeeId"
-            id="employeeId"
+            name="timesheetId"
+            value={timesheetId}
+            onChange={(e) => setTimesheetId(e.target.value)}
+            id="timesheetId"
             className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
           >
             <option value="" className="px-2 py-2 border border-gray-500">
-              Select Who&#39;s Timesheet Is This
+              Select parent Timesheet
             </option>
-            {employees && typeof employees === 'object' && employees?.map(employee => (
-              <option key={employee.id} value={employee.id} className="px-2 py-2 border border-gray-500">{employee.firstName} {employee.lastName}</option>
-            ))}
+            {timesheets &&
+              !timesheets.error &&
+              Array.from(timesheets)?.map((timesheet) => (
+                <option
+                  key={timesheet.id}
+                  value={timesheet.id}
+                  className="px-2 py-2 border border-gray-500"
+                >
+                  on {timesheet.date} for {timesheet.hours}
+                </option>
+              ))}
           </select>
-          {errors?.employeeId && (
-            <span className="text-red-500">{errors.employeeId}</span>
+          {errors?.timesheetId && (
+            <span className="text-red-500">{errors.timesheetId}</span>
+          )}
+        </p>
+        <p className="flex flex-col">
+          <label htmlFor="projectId" className="text-[18px] mb-1">
+            Entry For Project:
+          </label>
+          <select
+            name="projectId"
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
+            id="projectId"
+            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
+          >
+            <option value="" className="px-2 py-2 border border-gray-500">
+              Select project
+            </option>
+            {projects &&
+              !projects.error &&
+              Array.from(projects)?.map((project) => (
+                <option
+                  key={project.id}
+                  value={project.id}
+                  className="px-2 py-2 border border-gray-500"
+                >
+                  {project.projectName} - {project.projectCode}
+                </option>
+              ))}
+          </select>
+          {errors?.projectId && (
+            <span className="text-red-500">{errors.projectId}</span>
+          )}
+        </p>
+        <p className="flex flex-col">
+          <label htmlFor="task" className="text-[18px] mb-1">
+            Entry For Task:
+          </label>
+          <select
+            name="taskId"
+            value={taskId}
+            onChange={(e) => setTaskId(e.target.value)}
+            id="taskId"
+            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
+          >
+            <option value="" className="px-2 py-2 border border-gray-500">
+              Select Task
+            </option>
+            {tasks &&
+              !tasks.error &&
+              Array.from(tasks)?.map((task) => (
+                <option
+                  key={task.id}
+                  value={task.id}
+                  className="px-2 py-2 border border-gray-500"
+                >
+                  {task.taskName}
+                </option>
+              ))}
+          </select>
+          {errors?.taskId && (
+            <span className="text-red-500">{errors.taskId}</span>
           )}
         </p>
         <p className="flex flex-col">
           <label htmlFor="date" className="text-[18px] mb-1">
-            Timesheet Date
+            Entry Date
           </label>
           <input
             type="date"
             id="date"
             name="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.date && <span className="text-red-500">{errors.date}</span>}
         </p>
         <p className="flex flex-col">
           <label htmlFor="hours" className="text-[18px] mb-1">
-            Timesheet Hours
+            Entry Hours
           </label>
           <input
             type="number"
             id="hours"
             name="hours"
+            value={hours}
+            onChange={(e) => setHours(parseInt(e.target.value))}
             placeholder="Timesheet hours"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -63,46 +196,9 @@ const AddEntry = () => {
         >
           Create
         </button>
-      </Form>
+      </form>
     </main>
   );
 };
-
-export async function loader() {
-  return await getAllEmployees();
-}
-
-export async function action({ request }) {
-  const formData = await request.formData();
-  const employeeId = formData.get("employeeId");
-  const date = formData.get("date");
-  const hours = parseInt(formData.get("hours"));
-
-  const errors = {};
-
-  // validate the fields
-  if (!employeeId) {
-    errors.employeeId = "The timesheet must belong to an employee";
-  }
-
-  if (!date) {
-    errors.date = "The date is required for this timesheet";
-  }
-
-  if (!hours) {
-    errors.hours = "The hours are required for this timesheet";
-  } else if (typeof hours !== "number") {
-    errors.hours = "Hours should be a number";
-  }
-
-  // return data if we have errors
-  if (Object.keys(errors).length) {
-    return errors;
-  }
-  // otherwise create the timesheet and redirect
-  await insertTimesheet({ employeeId, date, hours });
-
-  return redirect("/dashboard");
-}
 
 export default AddEntry;

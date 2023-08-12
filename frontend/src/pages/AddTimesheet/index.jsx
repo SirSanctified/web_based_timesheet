@@ -48,11 +48,10 @@ const AddTimesheet = () => {
       date,
       hours,
     });
-    console.log(response);
     if (response?.error) {
-      errors.form = response.error;
+      errors.form = "Something went wrong, please try again";
     } else {
-      navigate("/dashboard");
+      navigate(-1);
     }
   };
 
