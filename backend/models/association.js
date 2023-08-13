@@ -1,7 +1,6 @@
 import Employee from "./employee.js";
 import Project from "./project.js";
 import Task from "./task.js";
-import Comment from "./comment.js";
 import Timesheet from "./timesheet.js";
 import Entry from "./entry.js";
 
@@ -49,51 +48,6 @@ Task.belongsTo(Project, {
   through: "project_tasks",
   foreignKey: "projectId",
   otherKey: "taskId",
-});
-
-// Task and Comment
-
-Task.belongsToMany(Comment, {
-  through: "task_comments",
-  foreignKey: "commentId",
-  otherKey: "taskId",
-  onDelete: "CASCADE"
-});
-
-Comment.belongsTo(Task, {
-  through: "task_comments",
-  foreignKey: "taskId",
-  otherKey: "commentId",
-});
-
-// Employee and Comment
-
-Employee.belongsToMany(Comment, {
-  through: "employee_comments",
-  foreignKey: "commentId",
-  otherKey: "employeeId",
-  onDelete: "CASCADE"
-});
-
-Comment.belongsTo(Employee, {
-  through: "employee_comments",
-  foreignKey: "employeeId",
-  otherKey: "commentId",
-});
-
-// Timesheet and Comment
-
-Timesheet.belongsToMany(Comment, {
-  through: "timesheet_comments",
-  foreignKey: "commentId",
-  otherKey: "timesheetId",
-  onDelete: "CASCADE"
-});
-
-Comment.belongsTo(Timesheet, {
-  through: "timesheet_comments",
-  foreignKey: "timesheetId",
-  otherKey: "commentId",
 });
 
 // Employee and Timesheet
@@ -157,4 +111,4 @@ Entry.belongsTo(Project, {
   otherKey: "entryId",
 });
 
-export { Employee, Project, Entry, Task, Comment, Timesheet };
+export { Employee, Project, Entry, Task, Timesheet };

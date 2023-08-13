@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { insertProject } from "../../api";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { deleteProjectById, getProjectById, updateProjectById } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const AddProject = () => {
+const ProjectDetail = () => {
   const [errors, setErrors] = useState({});
   const [projectName, setProjectName] = useState("");
   const [projectCode, setProjectCode] = useState("");
@@ -11,9 +11,26 @@ const AddProject = () => {
   const [projectEndDate, setProjectEndDate] = useState(null);
   const [projectDescription, setProjectDescription] = useState("");
   const [projectStatus, setProjectStatus] = useState("on hold");
-  const [formError, setFormError] = useState(false);
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    async function getProject() {
+      const response = await getProjectById(axioPrivate, id);
+      if (response.error) {
+        setErrors((prev) => (prev.form = response.error));
+      } else {
+        setProjectName(response.projectName);
+      setProjectCode(response.projectCode);
+      setProjectDescription(response.projectDescription);
+      setProjectStartDate(response.projectStartDate);
+      setProjectEndDate(response.projectEndDate);
+      setProjectStatus(response.projectStatus);
+      }
+    }
+    getProject();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,42 +50,43 @@ const AddProject = () => {
     }
 
     if (!projectStartDate) {
-      errors.projectStartDate = "The project start date is required";
+      errors.projectStartdate = "The project start date is required";
     }
 
     // return data if we have errors
     if (Object.keys(errors).length) {
       setErrors(errors);
+    }
+    // otherwise create the project and redirect
+    const response = await updateProjectById(axioPrivate, id, {
+      projectName,
+      projectCode,
+      projectDescription,
+      projectStartDate,
+      projectEndDate,
+      projectStatus,
+    });
+    if (response?.error) {
+      errors.form = "Something went wrong, please try again";
     } else {
-      // otherwise create the project and redirect
-      const response = await insertProject(axioPrivate, {
-        projectName,
-        projectCode,
-        projectDescription,
-        projectStartDate,
-        projectEndDate,
-        projectStatus,
-      });
-      if (response) {
-        errors.form = "Something went wrong, please try again";
-        setErrors(errors);
-        setFormError((prev) => !prev);
-      } else {
-        navigate(-1);
-      }
+      navigate(-1);
     }
   };
 
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      await deleteProjectById(axioPrivate, id);
+      navigate("/entries/all");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <main className="px-8 pt-16">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
         Create New Project
       </h1>
-      {formError && setTimeout(() => setFormError(false), 3000) && (
-        <p className="bg-red-500 text-white px-4 py-2 rounded absolute top-[15%] right-[5%]">
-          {errors.form}
-        </p>
-      )}
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
           <label htmlFor="projectName" className="text-[18px] mb-1">
@@ -172,15 +190,24 @@ const AddProject = () => {
             <span className="text-red-500">{errors.projectStatus}</span>
           )}
         </p>
-        <button
-          type="submit"
-          className="px-4 py-2 mt-4 bg-blue-700 rounded-sm min-w-[100px]"
-        >
-          Create
-        </button>
+        <div className="flex items-center justify-around [w-100%] mt-8">
+            <button
+              type="submit"
+              className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"
+            >
+              Update
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-500 hover:bg-red-900 text-white rounded-sm px-4 py-2"
+            >
+              Delete
+            </button>
+          </div>
       </form>
     </main>
   );
 };
 
-export default AddProject;
+export default ProjectDetail;

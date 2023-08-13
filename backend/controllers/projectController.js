@@ -24,6 +24,7 @@ export const createProject = async (req, res) => {
     });
     res.status(201).json(newProject);
   } catch (error) {
+    console.log(error)
     res.status(409).json({ message: error.message });
   }
 };

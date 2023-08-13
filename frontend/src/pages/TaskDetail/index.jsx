@@ -1,9 +1,15 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAllProjects, insertTask, getAllEmployees } from "../../api";
+import {
+  getAllProjects,
+  updateTaskById,
+  getTaskById,
+  getAllEmployees,
+  deleteTaskById,
+} from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const AddTask = () => {
+const TaskDetail = () => {
   const [errors, setErrors] = useState({});
   const [employees, setEmployees] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -16,13 +22,22 @@ const AddTask = () => {
   const [taskStatus, setTaskStatus] = useState("on hold");
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
     (async () => {
       const allEmployees = await getAllEmployees(axioPrivate);
       const allProjects = await getAllProjects(axioPrivate);
+      const task = await getTaskById(axioPrivate, id);
       setEmployees(allEmployees);
       setProjects(allProjects);
+      setTaskEmployees(task.employees);
+      setProjectId(task.projectId);
+      setTaskStartDate(task.taskStartDate);
+      setTaskEndDate(task.taskEndDate);
+      setTaskName(task.taskName);
+      setTaskDescription(task.taskDescription);
+      setTaskStatus(task.taskStatus);
     })();
   }, []);
 
@@ -55,7 +70,7 @@ const AddTask = () => {
       setErrors(errors);
     } else {
       // otherwise create the task and redirect
-      const response = await insertTask(axioPrivate, {
+      const response = await updateTaskById(axioPrivate, id, {
         employees: taskEmployees,
         taskName,
         taskDescription,
@@ -69,6 +84,16 @@ const AddTask = () => {
       } else {
         navigate(-1);
       }
+    }
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      await deleteTaskById(axioPrivate, id);
+      navigate("/tasks/all");
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -222,15 +247,24 @@ const AddTask = () => {
             <span className="text-red-500">{errors.taskStatus}</span>
           )}
         </p>
-        <button
-          type="submit"
-          className="px-4 py-2 mt-4 bg-blue-700 rounded-sm min-w-[100px]"
-        >
-          Create
-        </button>
+        <div className="flex items-center justify-around [w-100%] mt-8">
+          <button
+            type="submit"
+            className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"
+          >
+            Update
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="bg-red-500 hover:bg-red-900 text-white rounded-sm px-4 py-2"
+          >
+            Delete
+          </button>
+        </div>
       </form>
     </main>
   );
 };
 
-export default AddTask;
+export default TaskDetail;

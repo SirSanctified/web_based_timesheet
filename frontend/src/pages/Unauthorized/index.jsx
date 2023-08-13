@@ -13,7 +13,7 @@ const Unauthorized = () => {
       </p>
       <button
         onClick={goBack}
-        className="bg-blue-700 text-white py-2 px-4 rounded-sm hover:bg-blue-900 transition duration-150 ease-in-out min-w-100 mt-4"
+        className="bg-blue-700 text-white py-2 px-4 mx-auto rounded-sm hover:bg-blue-900 transition duration-150 ease-in-out min-w-100 mt-4"
       >
         Go Back
       </button>

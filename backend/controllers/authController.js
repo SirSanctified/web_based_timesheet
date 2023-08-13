@@ -45,20 +45,26 @@ export const login = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "1d"}
     );
-
     await Employee.update(
       { refreshToken },
-      { where: { email } }
+      { where: { id: existingEmployee.id } }
     );
+
+    const updatedEmployee = await Employee.findOne({
+      where: { id: existingEmployee.id },
+      raw: true,
+    });
+
+    console.log(updatedEmployee);
 
     // set http only cookie with refresh token
 
-    res.cookie("refreshToken", refreshToken, {
+    res.cookie("refreshToken", updatedEmployee.refreshToken, {
       httpOnly: true,
+      sameSite: "None",
       maxAge: 24 * 60 * 60 * 1000,
       secure: true,
     });
-
     res.status(200).json({ user: existingEmployee, token: accessToken });
   } catch (error) {
     res.status(401).json({ message: error.message || "Invalid credentials" });
@@ -67,12 +73,34 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   const { id } = req.params;
+  const cookies = req.cookies;
+
+  if (!cookies?.refreshToken) return res.status(204);
+  const refreshToken = cookies.refreshToken;
 
   try {
-    await Employee.update({ refreshToken: null }, { where: { id } });
-    res.status(200).json({ message: "Logged out successfully." });
+    const existingEmployee = await Employee.findOne({ where: { refreshToken } });
+    if (!existingEmployee) {
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
+      });
+      return res.status(204);
+    }
+    existingEmployee.refreshToken = null;
+    await existingEmployee.save();
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
+    });
+    res.status(204);
   } catch (error) {
-    res.status(400).json({ message: "Something went wrong." });
+    console.log(error);
+    res.status(204);
   }
 };
 
@@ -214,7 +242,6 @@ export const register = async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        throw new Error(error);
       } else {
         console.log("Email sent: " + info.response);
       }

@@ -10,14 +10,13 @@ import verifyJWT from "./middleware/verifyJWT.js";
 import employeeRouter from "./routes/employeeRoutes.js";
 import projectRouter from "./routes/projectRoutes.js";
 import taskRouter from "./routes/taskRoutes.js";
-import commentRouter from "./routes/commentRoutes.js";
 import timesheetRouter from "./routes/timesheetRoutes.js";
 import entryRouter from "./routes/entryRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import requestRouter from "./routes/requestRoutes.js";
 import handleRefreshToken from "./controllers/refreshTokenController.js";
 
-const PORT = process.env.PORT || 4500;
+const PORT = process.env.PORT || 3500;
 const app = express();
 const router = Router();
 
@@ -39,7 +38,6 @@ app.use("/api", verifyJWT);
 app.use("/api", employeeRouter);
 app.use("/api", projectRouter);
 app.use("/api", taskRouter);
-app.use("/api", commentRouter);
 app.use("/api", timesheetRouter);
 app.use("/api", entryRouter);
 

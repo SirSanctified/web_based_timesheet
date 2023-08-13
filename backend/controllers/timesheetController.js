@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Timesheet, Entry, Comment } from "../models/association.js";
+import { Timesheet, Entry } from "../models/association.js";
 import { sequelize } from "../config/db.js";
 
 // Create and Save a new Timesheet
@@ -121,21 +121,6 @@ export const getTimesheetEntries = async (req, res) => {
       message:
         err.message ||
         "Some error occurred while retrieving timesheet entries.",
-    });
-  }
-};
-
-export const getTimesheetComments = async (req, res) => {
-  try {
-    const data = await Comment.findAll({
-      where: { timesheetId: req.params.id },
-    });
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({
-      message:
-        err.message ||
-        "Some error occurred while retrieving timesheet comments.",
     });
   }
 };

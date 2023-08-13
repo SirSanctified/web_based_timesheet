@@ -56,6 +56,8 @@ const EntryDetail = () => {
       date,
       hours,
       timesheetId,
+      projectId,
+      taskId,
     });
     if (updatedEntry?.error) {
       setUpdated(false);
@@ -116,7 +118,7 @@ const EntryDetail = () => {
               value={projectId}
               onChange={(e) => setProjectId(e.target.value)}
               id="projectId"
-              className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
+              className="mb-1 px-2 py-2 border border-gray-500 rounded-sm w-[100%]"
             >
               <option value="" className="px-2 py-2 border border-gray-500">
                 Select project
@@ -143,7 +145,7 @@ const EntryDetail = () => {
               value={taskId}
               onChange={(e) => setTaskId(e.target.value)}
               id="taskId"
-              className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
+              className="mb-1 px-2 py-2 border border-gray-500 rounded-sm w-[100%]"
             >
               <option value="" className="px-2 py-2 border border-gray-500">
                 Select Task
@@ -188,7 +190,7 @@ const EntryDetail = () => {
               type="submit"
               className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"
             >
-              Submit
+              Update
             </button>
             <button
               type="button"

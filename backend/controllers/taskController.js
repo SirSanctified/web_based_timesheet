@@ -11,7 +11,6 @@ export const createTask = async (req, res) => {
       taskEndDate,
       taskStatus,
       projectId,
-      entries,
       employees,
     } = req.body;
     await sequelize.sync({ force: false });
@@ -26,8 +25,7 @@ export const createTask = async (req, res) => {
     });
 
     if (employees) await Task.addEmployees();
-    if (entries) await Task.addEntries();
-    res.status(201).json({ ...newTask, employees, entries });
+    res.status(201).json({ ...newTask, employees });
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
@@ -60,7 +58,7 @@ export const updateTask = async (req, res) => {
       taskStartDate,
       taskEndDate,
       taskStatus,
-      taskProject,
+      projectId,
     } = req.body;
     const updatedTask = await Task.update(
       {
@@ -69,7 +67,7 @@ export const updateTask = async (req, res) => {
         taskStartDate,
         taskEndDate,
         taskStatus,
-        projectId: taskProject,
+        projectId,
       },
       { where: { id: req.params.id } }
     );
@@ -102,21 +100,11 @@ export const getTaskEmployees = async (req, res) => {
   }
 };
 
-export const getTaskComments = async (req, res) => {
-  try {
-    const task = await Task.findOne({ where: { id: req.params.id } });
-    const comments = await task.getComments();
-    res.status(200).json(comments);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
 export const getTaskEntries = async (req, res) => {
   try {
     const task = await Task.findOne({ where: { id: req.params.id } });
-    const comments = await task.getEntries();
-    res.status(200).json(comments);
+    const entries = await task.getEntries();
+    res.status(200).json(entries);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }

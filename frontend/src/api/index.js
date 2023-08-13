@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:4500/api";
+const BASE_URL = "http://localhost:3500/api";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -16,10 +16,7 @@ export const axioPrivate = axios.create({
 
 export const loginUser = async (payload) => {
   try {
-    const response = await api.post(`/login`, payload, {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await api.post(`/login`, payload);
     return response.data;
   } catch (err) {
     if (err.response) {
@@ -29,19 +26,19 @@ export const loginUser = async (payload) => {
   }
 };
 
-export const logoutUser = async (id) => {
+export const logoutUser = async (axiosInstance, id) => {
   try {
-    await api.post(`/logout/${id}`);
+    await axiosInstance.post(`/logout/${id}`);
   } catch (err) {
     return { error: err.message };
   }
 };
 
-export const insertEmployee = async (payload) => {
+export const registerUser = async (axiosInstance, payload) => {
   try {
-    await api.post(`/employees`, payload);
+    await axiosInstance.post(`/register`, payload);
   } catch (err) {
-    return err.message;
+    return { error: err.message };
   }
 };
 
@@ -53,50 +50,50 @@ export const getAllEmployees = async (axiosInstance) => {
     return err.message;
   }
 };
-export const updateEmployeeById = async(axiosInstance,id, payload) => {
+export const updateEmployeeById = async (axiosInstance, id, payload) => {
   try {
-    const response = axiosInstance.put(`/employee/${id}`, payload);
+    const response = axiosInstance.put(`/employees/${id}`, payload);
     return response.data;
   } catch (err) {
     return err.message;
   }
 };
-export const deleteEmployeeById = async(axiosInstance, id) => {
+export const deleteEmployeeById = async (axiosInstance, id) => {
   try {
-    await axiosInstance.delete(`/employee/${id}`);
+    await axiosInstance.delete(`/employees/${id}`);
   } catch (err) {
     return err.message;
   }
 };
-export const getEmployeeById = async(axiosInstance, id) => {
+export const getEmployeeById = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/employee/${id}`);
+    const response = await axiosInstance.get(`/employees/${id}`);
     return response.data;
   } catch (err) {
     return err.message;
   }
 };
-export const getEmployeeProjects = async(axiosInstance, id) => {
+export const getEmployeeProjects = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/employee/${id}/projects`);
-    return response.data;
-  } catch (err) {
-    return err.message;
-  }
-};
-
-export const getEmployeeTasks = async(axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/employee/${id}/tasks`);
+    const response = await axiosInstance.get(`/employees/${id}/projects`);
     return response.data;
   } catch (err) {
     return err.message;
   }
 };
 
-export const getEmployeeTimesheets = async(axiosInstance, id) => {
+export const getEmployeeTasks = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/employee/${id}/timesheets`);
+    const response = await axiosInstance.get(`/employees/${id}/tasks`);
+    return response.data;
+  } catch (err) {
+    return err.message;
+  }
+};
+
+export const getEmployeeTimesheets = async (axiosInstance, id) => {
+  try {
+    const response = await axiosInstance.get(`/employees/${id}/timesheets`);
     return response.data;
   } catch (err) {
     return err.message;
@@ -110,8 +107,8 @@ export const insertProject = async (axiosInstance, payload) => {
     return err.message;
   }
 };
-export const getAllProjects = async(axiosInstance) => {
-  try{
+export const getAllProjects = async (axiosInstance) => {
+  try {
     const response = await axiosInstance.get(`/projects`);
     return response.data;
   } catch (error) {
@@ -119,34 +116,34 @@ export const getAllProjects = async(axiosInstance) => {
   }
 };
 
-export const updateProjectById = async(axiosInstance, id, payload) => {
+export const updateProjectById = async (axiosInstance, id, payload) => {
   try {
-    const response = await axiosInstance.put(`/project/${id}`, payload);
+    const response = await axiosInstance.put(`/projects/${id}`, payload);
     return response.data;
   } catch (error) {
     return { error: error?.response?.error || error.message };
   }
 };
-export const deleteProjectById = async(axiosInstance, id) => {
-  try{
-    await axiosInstance.delete(`/project/${id}`);
+export const deleteProjectById = async (axiosInstance, id) => {
+  try {
+    await axiosInstance.delete(`/projects/${id}`);
   } catch (error) {
     return { error: error?.response?.error || error.message };
   }
 };
 
-export const getProjectById = async(axiosInstance, id) => {
+export const getProjectById = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/project/${id}`);
+    const response = await axiosInstance.get(`/projects/${id}`);
     return response.data;
   } catch (error) {
     return { error: error?.response?.error || error.message };
   }
 };
 
-export const getProjectEmployees = async(axiosInstance, id) => {
+export const getProjectEmployees = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/project/${id}/employees`);
+    const response = await axiosInstance.get(`/projects/${id}/employees`);
     return response.data;
   } catch (error) {
     return { error: error?.response?.error || error.message };
@@ -155,7 +152,7 @@ export const getProjectEmployees = async(axiosInstance, id) => {
 
 export const getProjectTasks = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/project/${id}/tasks`);
+    const response = await axiosInstance.get(`/projects/${id}/tasks`);
     return response.data;
   } catch (error) {
     return { error: error?.response?.error || error.message };
@@ -169,7 +166,7 @@ export const insertTask = async (axiosInstance, payload) => {
     return err.message;
   }
 };
-export const getAllTasks = async(axiosInstance) => {
+export const getAllTasks = async (axiosInstance) => {
   try {
     const response = await axiosInstance.get(`/tasks`);
     return response.data;
@@ -178,45 +175,45 @@ export const getAllTasks = async(axiosInstance) => {
   }
 };
 
-export const updateTaskById = async(axiosInstance, id, payload) => {
+export const updateTaskById = async (axiosInstance, id, payload) => {
   try {
-    const response = await axiosInstance.put(`/task/${id}`, payload);
+    const response = await axiosInstance.put(`/tasks/${id}`, payload);
     return response.data;
   } catch (error) {
     return { error: error.message };
   }
 };
 
-export const deleteTaskById = async(axiosInstance, id) => {
+export const deleteTaskById = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.delete(`/task/${id}`);
+    const response = await axiosInstance.delete(`/tasks/${id}`);
     return response.data;
   } catch (error) {
     return { error: error.message };
   }
 };
 
-export const getTaskById = async(axiosInstance, id) => {
+export const getTaskById = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/task/${id}`);
+    const response = await axiosInstance.get(`/tasks/${id}`);
     return response.data;
   } catch (error) {
     return { error: error.message };
   }
 };
 
-export const getTaskEmployees = async(axiosinstance, id) => {
+export const getTaskEmployees = async (axiosinstance, id) => {
   try {
-    const response = await axiosinstance.get(`/task/${id}/employees`);
+    const response = await axiosinstance.get(`/tasks/${id}/employees`);
     return response.data;
   } catch (error) {
     return { error: error.message };
   }
 };
 
-export const getTaskComments = async(axiosInstance, id) => {
+export const getTaskEntries = async (axiosInstance, id) => {
   try {
-    const response = await axiosInstance.get(`/task/${id}/comments`);
+    const response = await axiosInstance.get(`/tasks/${id}/entries`);
     return response.data;
   } catch (error) {
     return { error: error.message };
@@ -317,20 +314,37 @@ export const getEntryById = async (axiosInstance, id) => {
   }
 };
 
-export const insertComment = async (payload) => {
+export const insertRequest = async (payload) => {
   try {
-    await api.post(`/comments`, payload);
+    const response = await api.post(`/requests`, payload);
+    return response.data;
   } catch (err) {
     return err.message;
   }
 };
-export const getAllComments = () => api.get(`/comments`);
-export const updateCommentById = (id, payload) =>
-  api.put(`/comment/${id}`, payload);
-export const deleteCommentById = (id) => api.delete(`/comment/${id}`);
-export const getCommentById = (id) => api.get(`/comment/${id}`);
-export const getCommentsByEmployee = (id) =>
-  api.get(`/comments/employee/${id}`);
-export const getCommentsByTask = (id) => api.get(`/comments/task/${id}`);
-export const getCommentsByEmployeeAndTask = (employeeId, taskId) =>
-  api.get(`/comments/employee/${employeeId}/task/${taskId}`);
+
+export const getAllRequests = async () => {
+  try {
+    const response = await api.get(`/requests`);
+    return response.data;
+  } catch (error) {
+    return { error: error?.response?.error || error.message };
+  }
+};
+
+export const getRequestById = async (id) => {
+  try {
+    const response = await api.get(`/requests/${id}`);
+    return response.data;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export const deleteRequestById = async (id) => {
+  try {
+    await api.delete(`/requests/${id}`);
+  } catch (error) {
+    return { error: error.message };
+  }
+};

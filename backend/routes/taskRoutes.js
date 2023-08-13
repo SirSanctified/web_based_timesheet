@@ -6,7 +6,6 @@ import {
   updateTask,
   deleteTask,
   getTaskEmployees,
-  getTaskComments,
   getTaskEntries,
 } from "../controllers/taskController.js";
 
@@ -21,8 +20,6 @@ taskRouter
   .delete(deleteTask);
 
 taskRouter.route("/tasks/:id/employees").get(getTaskEmployees);
-
-taskRouter.route("/tasks/:id/comments").get(getTaskComments);
 
 taskRouter.route("/tasks/:id/entries").get(getTaskEntries);
 

@@ -1,21 +1,38 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { registerUser } from "../../api";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { updateEmployeeById, deleteEmployeeById, getEmployeeById } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const Register = () => {
+const EmployeeDetail = () => {
   const [errors, setErrors] = useState({});
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [nationalId, setNationalId] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
   const [role, setRole] = useState("general");
   const [isActive, setIsActive] = useState(true);
   const [formError, setFormError] = useState(false);
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchEmployee = async () => {
+      const response = await getEmployeeById(axioPrivate, id);
+      if (response && !response.error) {
+        setFirstName(response.firstName);
+        setLastName(response.lastName);
+        setNationalId(response.nationalId);
+        setEmail(response.email);
+        setPhone(response.phone);
+        setRole(response.role);
+        setIsActive(response.isActive);
+      }
+    };
+    fetchEmployee();
+  }, [axioPrivate, id]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,10 +45,6 @@ const Register = () => {
 
     if (!lastName) {
       errors.lastName = "The last name is required for this employee";
-    }
-
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/.test(password)) {
-      errors.password = "The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character";
     }
 
     if (!/^(\d{1,3}\s?)?0?\d{2}\s?\d{3}\s?\d{4}$/.test(phone)) {
@@ -47,13 +60,12 @@ const Register = () => {
       setErrors(errors);
     } else {
       // otherwise create the employee and redirect
-      const response = await registerUser(axioPrivate, {
+      const response = await updateEmployeeById(axioPrivate, id, {
         firstName,
         lastName,
         phone,
         nationalId,
         email,
-        password,
         role,
         isActive,
       });
@@ -67,10 +79,20 @@ const Register = () => {
     }
   };
 
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      await deleteEmployeeById(axioPrivate, id);
+      navigate("/entries/all");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <main className="px-8 pt-16">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
-        Add New Employee
+        Update Employee
       </h1>
       {formError && setTimeout(() => setFormError(false), 3000) && (
         <p className="bg-red-500 text-white px-4 py-2 rounded absolute top-[15%] right-[5%]">
@@ -164,23 +186,6 @@ const Register = () => {
           )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="password" className="text-[18px] mb-1">
-            Password:
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
-          />
-          {errors?.password && (
-            <span className="text-red-500">{errors.password}</span>
-          )}
-        </p>
-        <p className="flex flex-col">
           <label htmlFor="role" className="text-[18px] mb-1">
             Role:
           </label>
@@ -213,15 +218,24 @@ const Register = () => {
             <span className="text-red-500">{errors.isActive}</span>
           )}
         </p>
-        <button
-          type="submit"
-          className="px-4 py-2 mt-4 bg-blue-700 rounded-sm min-w-[100px]"
-        >
-          Create
-        </button>
+        <div className="flex items-center justify-around [w-100%]">
+            <button
+              type="submit"
+              className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"
+            >
+              Update
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-500 hover:bg-red-900 text-white rounded-sm px-4 py-2"
+            >
+              Delete
+            </button>
+          </div>
       </form>
     </main>
   );
 };
 
-export default Register;
+export default EmployeeDetail;
