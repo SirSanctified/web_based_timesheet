@@ -26,6 +26,7 @@ import TaskDetail from "./pages/TaskDetail";
 import Employees from "./pages/Employees";
 import Register from "./pages/Register";
 import EmployeeDetail from "./pages/EmployeeDetail";
+import ApproveTimesheet from "./pages/ApproveTimesheet";
 
 export default function App() {
   const router = createBrowserRouter(
@@ -49,6 +50,7 @@ export default function App() {
           </Route>
           <Route element={<RequireAuth allowedRoles={["admin", "approver"]} />}>
             <Route path="timesheets/all" element={<Timesheets />} />
+            <Route path="timesheets/approve/:id" element={<ApproveTimesheet />} />
           </Route>
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
             <Route path="entries/all" element={<Entries />} />

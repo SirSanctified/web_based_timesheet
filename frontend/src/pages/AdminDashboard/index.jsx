@@ -18,9 +18,6 @@ const AdminDashboard = () => {
             <Link to={'/timesheets/all/'} className="bg-gray-700 text-white px-2 md:px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
               View
             </Link>
-            <Link to={'timesheets/approve/'} className="bg-green-700 text-white px-2 md:px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm">
-              Approve
-            </Link>
           </div>
         </div>
         <div className="flex items-center justify-between gap-1  md:gap-4  border-gray-500 border">

@@ -4,6 +4,10 @@ const BASE_URL = "http://localhost:3500/api";
 
 export const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export const axioPrivate = axios.create({
@@ -265,6 +269,24 @@ export const getTimesheetById = async (axiosInstance, id) => {
 export const deleteAllTimesheets = async (axiosInstance) => {
   try {
     axiosInstance.delete(`/timesheets`);
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export const approveTimesheet = async (axiosInstance, id) => {
+  try {
+    const response = await axiosInstance.put(`/timesheets/approve/${id}`);
+    return response.data;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export const getTimesheetEntries = async (axiosInstance, id) => {
+  try {
+    const response = await axiosInstance.get(`/timesheets/entries/${id}`);
+    return response.data;
   } catch (error) {
     return { error: error.message };
   }

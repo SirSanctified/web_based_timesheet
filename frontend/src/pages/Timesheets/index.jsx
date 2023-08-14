@@ -44,75 +44,88 @@ const Timesheets = () => {
         <p className="text-red-500 text-center">{error}</p>
       ) : (
         <div className="w-fit mx-auto">
-        <Link to="/timesheets/add" className="bg-blue-700 text-white px-4 py-2 rounded-sm hover:bg-blue-800">Add New Timesheet</Link>
-        <table className="border border-gray-500 w-fit rounded-sm mt-2">
-          <thead>
-            <tr className="border border-gray-500">
-              <td className="border border-gray-500 p-4 align-middle"></td>
-              <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
-                Employee
-              </td>
-              <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
-                Date
-              </td>
-              <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
-                Hours
-              </td>
-              <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
-                Status
-              </td>
-              <td></td>
-            </tr>
-          </thead>
-          <tbody>
-            {timesheets &&
-              timesheets.map((timesheet, index) => {
-                const employee = employees?.find(
-                  (emp) => emp.id === timesheet.employeeId
-                );
-                return (
-                  <tr key={timesheet.id} className="border border-gray-500">
-                    <td className="border border-gray-500 p-4 align-middle md:min-w-[100px]">
-                      <Link
-                        to={`/timesheets/${timesheet.id}`}
-                        className="text-blue-700 underline font-bold align-middle"
-                      >
-                        {index + 1}
-                      </Link>
-                    </td>
-                    <td className="border border-gray-500 p-4 align-middle">
-                      {employee.firstName} {employee.lastName}
-                    </td>
-                    <td className="border border-gray-500 p-4 align-middle">
-                      {timesheet.date}
-                    </td>
-                    <td className="border border-gray-500 p-4 align-middle">
-                      {timesheet.hours}
-                    </td>
-                    <td className="border border-gray-500 p-4 align-middle">
-                      {timesheet.status}
-                    </td>
-                    <td className="border border-gray-500 p-4 align-middle">
-                      <Link
-                        to={`/timesheets/${timesheet.id}`}
-                        className="text-white bg-blue-700 rounded-sm px-4 py-2 hover:bg-blue-900"
-                      >
-                        Edit
-                      </Link>
-                    </td>
-                    <td className="border border-gray-500 p-4 align-middle">
-                      <button
-                        onClick={() => handleDelete(timesheet.id)}
-                        className="text-white bg-red-500 rounded-sm px-4 py-2 hover:bg-red-900"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
+          <Link
+            to="/timesheets/add"
+            className="bg-blue-700 text-white px-4 py-2 rounded-sm hover:bg-blue-800"
+          >
+            Add New Timesheet
+          </Link>
+          <table className="border border-gray-500 w-fit rounded-sm mt-2">
+            <thead>
+              <tr className="border border-gray-500">
+                <td className="border border-gray-500 p-4 align-middle"></td>
+                <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  Employee
+                </td>
+                <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  Date
+                </td>
+                <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  Hours
+                </td>
+                <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  Status
+                </td>
+                <td></td>
+              </tr>
+            </thead>
+            <tbody>
+              {timesheets &&
+                timesheets.map((timesheet, index) => {
+                  const employee = employees?.find(
+                    (emp) => emp.id === timesheet.employeeId
+                  );
+                  return (
+                    <tr key={timesheet.id} className="border border-gray-500">
+                      <td className="border border-gray-500 p-4 align-middle md:min-w-[100px]">
+                        <Link
+                          to={`/timesheets/${timesheet.id}`}
+                          className="text-blue-700 underline font-bold align-middle"
+                        >
+                          {index + 1}
+                        </Link>
+                      </td>
+                      <td className="border border-gray-500 p-4 align-middle">
+                        {employee.firstName} {employee.lastName}
+                      </td>
+                      <td className="border border-gray-500 p-4 align-middle">
+                        {timesheet.date}
+                      </td>
+                      <td className="border border-gray-500 p-4 align-middle">
+                        {timesheet.hours}
+                      </td>
+                      <td className="border border-gray-500 p-4 align-middle">
+                        {timesheet.status}
+                      </td>
+                      <td className="border border-gray-500 p-4 align-middle">
+                        <Link
+                          to={`/timesheets/approve/${timesheet.id}`}
+                          className="bg-green-700 text-white px-2 md:px-4 py-2 min-w-[100px] flex items-center justify-center rounded-sm"
+                        >
+                          Approve
+                        </Link>
+                      </td>
+                      <td className="border border-gray-500 p-4 align-middle">
+                        <Link
+                          to={`/timesheets/${timesheet.id}`}
+                          className="text-white bg-blue-700 rounded-sm px-4 py-2 hover:bg-blue-900"
+                        >
+                          Edit
+                        </Link>
+                      </td>
+                      <td className="border border-gray-500 p-4 align-middle">
+                        <button
+                          onClick={() => handleDelete(timesheet.id)}
+                          className="text-white bg-red-500 rounded-sm px-4 py-2 hover:bg-red-900"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
         </div>
       )}
     </main>

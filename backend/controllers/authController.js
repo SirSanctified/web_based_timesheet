@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 import { v4 as uuidv4 } from "uuid";
 import { transporter } from "../utils/index.js";
 import { Employee } from "../models/association.js";
-import { sequelize } from "../config/db.js";
-
 
 dotenv.config();
 
@@ -13,12 +11,16 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const existingEmployee = await Employee.findOne({ where: { email }, raw: true, attributes: { exclude: ["refreshToken", "resetToken"] } });
+    const existingEmployee = await Employee.findOne({
+      where: { email },
+      raw: true,
+      attributes: { exclude: ["refreshToken", "resetToken"] },
+    });
 
     if (!existingEmployee)
       return res.status(404).json({ message: "Employee doesn't exist." });
-   
-      const isPasswordCorrect = await bcrypt.compare(
+
+    const isPasswordCorrect = await bcrypt.compare(
       password,
       existingEmployee.password
     );
@@ -43,7 +45,7 @@ export const login = async (req, res) => {
         role: existingEmployee.role,
       },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d"}
+      { expiresIn: "1d" }
     );
     await Employee.update(
       { refreshToken },
@@ -55,17 +57,28 @@ export const login = async (req, res) => {
       raw: true,
     });
 
-    console.log(updatedEmployee);
-
     // set http only cookie with refresh token
 
-    res.cookie("refreshToken", updatedEmployee.refreshToken, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       sameSite: "None",
       maxAge: 24 * 60 * 60 * 1000,
-      secure: true,
+      secure: false,
     });
-    res.status(200).json({ user: existingEmployee, token: accessToken });
+    res.status(200).json({
+      user: {
+        id: updatedEmployee.id,
+        firstName: updatedEmployee.firstName,
+        lastName: updatedEmployee.lastName,
+        email: updatedEmployee.email,
+        role: updatedEmployee.role,
+        nationalId: updatedEmployee.nationalId,
+        phone: updatedEmployee.phone,
+        role: updatedEmployee.role,
+        isActive: updatedEmployee.isActive,
+      },
+      token: accessToken,
+    });
   } catch (error) {
     res.status(401).json({ message: error.message || "Invalid credentials" });
   }
@@ -79,13 +92,15 @@ export const logout = async (req, res) => {
   const refreshToken = cookies.refreshToken;
 
   try {
-    const existingEmployee = await Employee.findOne({ where: { refreshToken } });
+    const existingEmployee = await Employee.findOne({
+      where: { refreshToken },
+    });
     if (!existingEmployee) {
       res.clearCookie("refreshToken", {
         httpOnly: true,
-      sameSite: "None",
-      maxAge: 24 * 60 * 60 * 1000,
-      secure: true,
+        sameSite: "None",
+        maxAge: 24 * 60 * 60 * 1000,
+        secure: false,
       });
       return res.status(204);
     }

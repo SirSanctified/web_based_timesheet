@@ -57,11 +57,11 @@ export const getTimesheetById = async (req, res) => {
 // Update a Timesheet by the id in the request
 export const updateTimesheet = async (req, res) => {
   const id = req.params.id;
-  const { date, hours, projectId, entryId } = req.body;
+  const { date, hours, employeeId } = req.body;
 
   try {
     await Timesheet.update(
-      { date, hours, projectId, entryId },
+      { date, hours, employeeId },
       {
         where: { id: id },
       }
@@ -81,6 +81,7 @@ export const deleteTimesheet = async (req, res) => {
   const id = req.params.id;
 
   try {
+    const data = Timesheet.findByPk(id);
     await Timesheet.destroy({
       where: { id: id },
     });
@@ -126,17 +127,16 @@ export const getTimesheetEntries = async (req, res) => {
 };
 
 export const approveTimesheet = async (req, res) => {
-  if (!["approver", "admin"].includes(req.user.role))
-    return res.status(403).json({ message: "Forbidden" });
-
   try {
     const timesheet = await Timesheet.findByPk(req.params.id);
 
     if (timesheet.employeeId === req.user.id)
-      return res.status(403).json({ message: "Forbidden" });
+      return res.status(403).json({ message: "Cannot approve yourself" });
 
-    timesheet["status"] = req.body.status;
-    await timesheet.save();
+    await Timesheet.update(
+      { status: req.body.status },
+      { where: { id: req.params.id } }
+    );
     res.status(200).json({ message: "Timesheet successifully approved!" });
   } catch (error) {
     res
