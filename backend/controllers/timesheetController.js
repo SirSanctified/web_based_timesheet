@@ -127,18 +127,18 @@ export const getTimesheetEntries = async (req, res) => {
 };
 
 export const approveTimesheet = async (req, res) => {
+  const { status } = req.body;
   try {
     const timesheet = await Timesheet.findByPk(req.params.id);
 
     if (timesheet.employeeId === req.user.id)
       return res.status(403).json({ message: "Cannot approve yourself" });
-
-    await Timesheet.update(
-      { status: req.body.status },
-      { where: { id: req.params.id } }
-    );
+    timesheet.status = status;
+    console.log(status);
+    await timesheet.save()
     res.status(200).json({ message: "Timesheet successifully approved!" });
   } catch (error) {
+    console.log(error);
     res
       .status(409)
       .json({ error: error.message || "Cannot approve timesheet." });

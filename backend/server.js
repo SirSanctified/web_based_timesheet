@@ -15,6 +15,7 @@ import entryRouter from "./routes/entryRoutes.js";
 import authRouter from "./routes/authRoutes.js";
 import requestRouter from "./routes/requestRoutes.js";
 import handleRefreshToken from "./controllers/refreshTokenController.js";
+import { createRequest } from "./controllers/requestController.js";
 
 const PORT = process.env.PORT || 3500;
 const app = express();
@@ -27,14 +28,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 router.get("/refresh-token", handleRefreshToken);
+router.post("/requests", createRequest);
 
 // use routes
 app.use("/api", router);
-app.use("/api", requestRouter);
 app.use("/api/register", verifyJWT);
 app.use("/api/logout/:id", verifyJWT);
 app.use("/api", authRouter);
 app.use("/api", verifyJWT);
+app.use("/api", requestRouter);
 app.use("/api", employeeRouter);
 app.use("/api", projectRouter);
 app.use("/api", taskRouter);

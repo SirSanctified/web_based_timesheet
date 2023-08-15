@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import AdminDashboard from "./pages/AdminDashboard";
 import AddTimesheet from "./pages/AddTimesheet";
 import Login from "./pages/Login";
 import RequireAuth from "./components/RequireAuth";
@@ -27,6 +26,10 @@ import Employees from "./pages/Employees";
 import Register from "./pages/Register";
 import EmployeeDetail from "./pages/EmployeeDetail";
 import ApproveTimesheet from "./pages/ApproveTimesheet";
+import RequestRegistration from "./pages/RequestRegistration";
+import RegistrationRequests from "./pages/RegistrationRequests";
+import RequestDetail from "./pages/RequestDetail";
+import Dashboard from "./components/Dashboard";
 
 export default function App() {
   const router = createBrowserRouter(
@@ -35,13 +38,14 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="request-registration" element={<RequestRegistration />} />
         <Route element={<PersistLogin />}>
           <Route
             element={
               <RequireAuth allowedRoles={["admin", "approver", "general"]} />
             }
           >
-            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="timesheets/add" element={<AddTimesheet />} />
             <Route path="timesheets/:id" element={<TimesheetDetail />} />
             <Route path="entries/add" element={<AddEntry />} />
@@ -62,6 +66,8 @@ export default function App() {
             <Route path="employees/all" element={<Employees />} />
             <Route path="register" element={<Register />} />
             <Route path="employees/:id" element={<EmployeeDetail />} />
+            <Route path="registration-requests/all" element={<RegistrationRequests />} />
+            <Route path="requests/:id" element={<RequestDetail />} />
           </Route>
         </Route>
       </Route>

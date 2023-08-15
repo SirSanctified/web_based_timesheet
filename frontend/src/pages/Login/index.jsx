@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser } from "../../api";
 import useAuth from "../../hooks/useAuth";
 
@@ -88,6 +88,12 @@ const Login = () => {
         <button className="bg-blue-700 text-white py-2 px-4 rounded-sm hover:bg-blue-900 transition duration-150 ease-in-out min-w-full md:min-w-[100px] mt-4">
           Login
         </button>
+        <p className="my-4 text-center"> 
+          Don&#39;t have an account?{" "}
+          <Link to="/request-registration" className="text-blue-700 hover:underline">
+            Contact Admin
+          </Link>
+        </p>
       </form>
     </main>
   );

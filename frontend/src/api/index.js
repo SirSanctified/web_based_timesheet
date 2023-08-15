@@ -274,9 +274,9 @@ export const deleteAllTimesheets = async (axiosInstance) => {
   }
 };
 
-export const approveTimesheet = async (axiosInstance, id) => {
+export const approveTimesheet = async (axiosInstance, id, payload) => {
   try {
-    const response = await axiosInstance.put(`/timesheets/approve/${id}`);
+    const response = await axiosInstance.put(`/timesheets/approve/${id}`, payload);
     return response.data;
   } catch (error) {
     return { error: error.message };
@@ -345,27 +345,27 @@ export const insertRequest = async (payload) => {
   }
 };
 
-export const getAllRequests = async () => {
+export const getAllRequests = async (axiosInstance) => {
   try {
-    const response = await api.get(`/requests`);
+    const response = await axiosInstance.get(`/requests`);
     return response.data;
   } catch (error) {
     return { error: error?.response?.error || error.message };
   }
 };
 
-export const getRequestById = async (id) => {
+export const getRequestById = async (axiosInstance, id) => {
   try {
-    const response = await api.get(`/requests/${id}`);
+    const response = await axiosInstance.get(`/requests/${id}`);
     return response.data;
   } catch (error) {
     return { error: error.message };
   }
 };
 
-export const deleteRequestById = async (id) => {
+export const deleteRequestById = async (axiosInstance, id) => {
   try {
-    await api.delete(`/requests/${id}`);
+    await axiosInstance.delete(`/requests/${id}`);
   } catch (error) {
     return { error: error.message };
   }
