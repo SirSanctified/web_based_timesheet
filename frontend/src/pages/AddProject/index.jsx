@@ -60,7 +60,7 @@ const AddProject = () => {
   };
 
   return (
-    <main className="px-8 pt-16">
+    <main className="px-8 pt-16 w-[100%]">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
         Create New Project
       </h1>
@@ -108,8 +108,7 @@ const AddProject = () => {
           <label htmlFor="projectDescription" className="text-[18px] mb-1">
             Project Description (optional):
           </label>
-          <input
-            type="text"
+          <textarea
             id="projectDescription"
             name="projectDescription"
             value={projectDescription}

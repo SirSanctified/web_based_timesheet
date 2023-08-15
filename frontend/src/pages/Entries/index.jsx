@@ -30,7 +30,7 @@ const Entries = () => {
   };
 
   return (
-    <main className="mt-16 mx-8">
+    <main className="mt-16">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
         Available Entries
       </h1>
@@ -40,7 +40,7 @@ const Entries = () => {
         <div className="w-fit mx-auto max-w-[100vw] overflow-scroll">
           <Link
             to="/entries/add"
-            className="bg-blue-700 text-white px-4 py-2 rounded-sm align-middle hover:bg-blue-800"
+            className="bg-blue-700 text-white px-2 py-1 rounded-sm align-middle hover:bg-blue-800"
           >
             Add New Entry
           </Link>
@@ -48,14 +48,14 @@ const Entries = () => {
           <table className="border border-gray-500 w-fit rounded-sm mt-2">
             <thead>
               <tr className="border border-gray-500">
-                <td className="border border-gray-500 p-4 align-middle"></td>
-                <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                <td className="border border-gray-500 p-2 align-middle"></td>
+                <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                   Timesheet
                 </td>
-                <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                   Date
                 </td>
-                <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                   Hours
                 </td>
 
@@ -70,7 +70,7 @@ const Entries = () => {
                   );
                   return (
                     <tr key={entry.id} className="border border-gray-500">
-                      <td className="border border-gray-500 p-4 align-middle md:min-w-[100px]">
+                      <td className="border border-gray-500 p-2 align-middle md:min-w-[100px]">
                         <Link
                           to={`/entries/${entry.id}`}
                           className="text-blue-700 underline font-bold align-middle"
@@ -78,27 +78,27 @@ const Entries = () => {
                           {index + 1}
                         </Link>
                       </td>
-                      <td className="border border-gray-500 p-4 align-middle">
+                      <td className="border border-gray-500 p-2 align-middle">
                         {timesheet.date} for {timesheet.hours}
                       </td>
-                      <td className="border border-gray-500 p-4 align-middle">
+                      <td className="border border-gray-500 p-2 align-middle">
                         {entry.date}
                       </td>
-                      <td className="border border-gray-500 p-4 align-middle">
+                      <td className="border border-gray-500 p-2 align-middle">
                         {entry.hours}
                       </td>
-                      <td className="border border-gray-500 p-4 align-middle">
+                      <td className="border border-gray-500 p-2 align-middle">
                         <Link
                           to={`/entries/${entry.id}`}
-                          className="text-white bg-blue-700 rounded-sm px-4 py-2 hover:bg-blue-900"
+                          className="text-white bg-blue-700 rounded-sm px-4 py-1 hover:bg-blue-900"
                         >
                           Edit
                         </Link>
                       </td>
-                      <td className="border border-gray-500 p-4 align-middle">
+                      <td className="border border-gray-500 p-2 align-middle">
                         <button
                           onClick={() => handleDelete(entry.id)}
-                          className="text-white bg-red-500 rounded-sm px-4 py-2 hover:bg-red-900"
+                          className="text-white bg-red-500 rounded-sm px-2 py-1 hover:bg-red-900"
                         >
                           Delete
                         </button>

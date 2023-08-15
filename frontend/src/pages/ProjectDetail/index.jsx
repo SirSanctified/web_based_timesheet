@@ -83,7 +83,7 @@ const ProjectDetail = () => {
     }
   };
   return (
-    <main className="px-8 pt-16">
+    <main className=" w-[100%] pt-16">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
         Create New Project
       </h1>
@@ -126,8 +126,7 @@ const ProjectDetail = () => {
           <label htmlFor="projectDescription" className="text-[18px] mb-1">
             Project Description (optional):
           </label>
-          <input
-            type="text"
+          <textarea
             id="projectDescription"
             name="projectDescription"
             value={projectDescription}

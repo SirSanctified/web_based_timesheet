@@ -13,7 +13,6 @@ class Task extends Model {
         taskName: {
           type: DataTypes.STRING,
           allowNull: false,
-          unique: true,
         },
         taskDescription: {
           type: DataTypes.STRING,

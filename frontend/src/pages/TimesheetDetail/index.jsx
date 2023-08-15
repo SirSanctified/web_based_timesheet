@@ -69,7 +69,7 @@ const TimesheetDetail = () => {
   };
 
   return (
-    <main className="mt-16 mx-8">
+    <main className="mt-16 w-[100%]">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
         Edit Timesheet
       </h1>

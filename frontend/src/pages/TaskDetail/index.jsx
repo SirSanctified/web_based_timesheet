@@ -98,7 +98,7 @@ const TaskDetail = () => {
   };
 
   return (
-    <main className="px-8 pt-16">
+    <main className="px-8 pt-16 w-[100%]">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
         Create New Task
       </h1>
@@ -140,7 +140,11 @@ const TaskDetail = () => {
           <select
             name="taskEmployees"
             value={taskEmployees}
-            onChange={(e) => setTaskEmployees(e.target.value)}
+            onChange={(e) => {
+              setEmployees(() => {
+                Array.from(e.target.selectedOptions), (option) => option.value;
+              });
+            }}
             id="taskEmployees"
             multiple
             className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"

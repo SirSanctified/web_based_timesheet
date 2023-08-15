@@ -48,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <main className="mx-8 lg:w-1/2 lg:mx-auto md:w-2/3 md:mx-auto w-100 mt-16 p-4 bg-slate-300 rounded shadow-md">
+    <main className="lg:w-1/2 lg:mx-auto md:w-2/3 md:mx-auto w-100 mt-16 p-4 bg-slate-300 rounded shadow-md">
       <h1 className="text-blue-950 text-2xl text-center font-black">Login</h1>
       <p className="text-center my-4 text-lg">
         Fill in the form below to login to your account.

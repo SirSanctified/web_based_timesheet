@@ -279,7 +279,7 @@ export const approveTimesheet = async (axiosInstance, id, payload) => {
     const response = await axiosInstance.put(`/timesheets/approve/${id}`, payload);
     return response.data;
   } catch (error) {
-    return { error: error.message };
+    return { error: error?.response.error || "An error occured while processing your request." };
   }
 };
 

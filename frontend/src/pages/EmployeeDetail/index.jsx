@@ -90,7 +90,7 @@ const EmployeeDetail = () => {
   };
 
   return (
-    <main className="px-8 pt-16">
+    <main className="pt-16 w-[100%]">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
         Update Employee
       </h1>
@@ -218,7 +218,7 @@ const EmployeeDetail = () => {
             <span className="text-red-500">{errors.isActive}</span>
           )}
         </p>
-        <div className="flex items-center justify-around [w-100%]">
+        <div className="flex items-center justify-around mt-4 [w-100%]">
             <button
               type="submit"
               className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"

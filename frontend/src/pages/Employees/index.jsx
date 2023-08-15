@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { getAllEmployees, deleteEmployeeById } from "../../api";
 import { Link } from "react-router-dom";
+import { MdCheck } from "react-icons/md";
+import { FaTimes } from "react-icons/fa";
 
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
@@ -27,7 +29,7 @@ const Employees = () => {
   };
 
   return (
-    <main className="mt-16 mx-8">
+    <main className="mt-16">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
         Available Employees
       </h1>
@@ -45,34 +47,34 @@ const Employees = () => {
             <table className="border border-gray-500 w-fit rounded-sm mt-2">
               <thead>
                 <tr className="border border-gray-500">
-                  <td className="border border-gray-500 p-4 align-middle"></td>
-                  <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  <td className="border border-gray-500 p-2 align-middle"></td>
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                     Name
                   </td>
-                  <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                     National Id
                   </td>
-                  <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                     Phone Number
                   </td>
-                  <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                     Email
                   </td>
-                  <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
-                    Status
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
+                    Active
                   </td>
-                  <td className="border border-gray-500 p-4 align-middle text-xl font-bold text-blue-950">
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
                     Role
                   </td>
                   <td></td>
                 </tr>
               </thead>
               <tbody>
-                {employees &&
-                  employees.map((employee, index) => {
+                {employees && 
+                  employees?.map((employee, index) => {
                     return (
                       <tr key={employee.id} className="border border-gray-500">
-                        <td className="border border-gray-500 p-4 align-middle md:min-w-[100px]">
+                        <td className="border border-gray-500 p-2 align-middle md:min-w-[100px]">
                           <Link
                             to={`/employees/${employee.id}`}
                             className="text-blue-700 underline font-bold align-middle"
@@ -80,36 +82,36 @@ const Employees = () => {
                             {index + 1}
                           </Link>
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
+                        <td className="border border-gray-500 p-2 align-middle">
                           {employee.firstName} {employee.lastName}
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
+                        <td className="border border-gray-500 p-2 align-middle">
                           {employee.nationalId}
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
+                        <td className="border border-gray-500 p-2 align-middle">
                           {employee.phone}
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
+                        <td className="border border-gray-500 p-2 align-middle">
                           {employee.email}
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
-                          {employee.isActive ? "Active" : "Inactive"}
+                        <td className="p-2 align-middle flex items-center justify-center">
+                          {employee.isActive ? <MdCheck className="text-green-700 text-xl font-bold" /> : <FaTimes className="text-red-700 text-xl font-bold" />}
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
+                        <td className="border border-gray-500 p-2 align-middle">
                         {employee.role}
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
+                        <td className="border border-gray-500 p-2 align-middle">
                           <Link
                             to={`/employees/${employee.id}`}
-                            className="text-white bg-blue-700 rounded-sm px-4 py-2 hover:bg-blue-900"
+                            className="text-white bg-blue-700 rounded-sm px-2 py-1 hover:bg-blue-900"
                           >
                             Edit
                           </Link>
                         </td>
-                        <td className="border border-gray-500 p-4 align-middle">
+                        <td className="border border-gray-500 p-2 align-middle">
                           <button
                             onClick={() => handleDelete(employee.id)}
-                            className="text-white bg-red-500 rounded-sm px-4 py-2 hover:bg-red-900"
+                            className="text-white bg-red-500 rounded-sm px-2 py-1 hover:bg-red-900"
                           >
                             Delete
                           </button>
