@@ -42,7 +42,21 @@ export const getTasks = async (req, res) => {
 
 export const getTaskById = async (req, res) => {
   try {
-    const task = await Task.findOne({ where: { id: req.params.id } });
+    const task = await Task.findOne({
+      where: { id: req.params.id },
+      include: [
+        {
+          model: Entry,
+        },
+        {
+          model: Project,
+        },
+        {
+          model: Employee,
+          attributes: { exclude: ["password", "refreshToken", "resetToken"] },
+        },
+      ],
+    });
     res.status(200).json(task);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -85,26 +99,6 @@ export const deleteTask = async (req, res) => {
   try {
     await Task.destroy({ where: { id: req.params.id } });
     res.status(200).json({ message: "Task deleted successfully" });
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
-export const getTaskEmployees = async (req, res) => {
-  try {
-    const task = await Task.findOne({ where: { id: req.params.id } });
-    const employees = await task.getEmployees();
-    res.status(200).json(employees);
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
-export const getTaskEntries = async (req, res) => {
-  try {
-    const task = await Task.findOne({ where: { id: req.params.id } });
-    const entries = await task.getEntries();
-    res.status(200).json(entries);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }

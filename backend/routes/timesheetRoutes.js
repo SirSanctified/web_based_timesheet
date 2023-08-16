@@ -6,7 +6,6 @@ import {
   updateTimesheet,
   deleteTimesheet,
   deleteAllTimesheets,
-  getTimesheetEntries,
   approveTimesheet,
 } from "../controllers/timesheetController.js";
 
@@ -24,7 +23,6 @@ timesheetRouter.route("/timesheets/:id")
 
 timesheetRouter.route("/timesheets/approve/:id").put(approveTimesheet);
 
-timesheetRouter.route("/timesheets/entries/:id").get(getTimesheetEntries);
 
 
 export default timesheetRouter;

@@ -1,4 +1,10 @@
-import { Entry } from "../models/association.js";
+import {
+  Employee,
+  Entry,
+  Timesheet,
+  Task,
+  Project,
+} from "../models/association.js";
 import { sequelize } from "../config/db.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -24,7 +30,23 @@ export const createEntry = async (req, res) => {
 
 export async function getEntries(req, res) {
   try {
-    const entries = await Entry.findAll();
+    const entries = await Entry.findAll({
+      include: [
+        {
+          model: Project,
+        },
+        {
+          model: Task,
+        },
+        {
+          model: Timesheet,
+          include: {
+            model: Employee,
+            attributes: { exclude: ["password", "refreshToken", "resetToken"] },
+          },
+        },
+      ],
+    });
     res.status(200).json(entries);
   } catch (err) {
     res
@@ -36,7 +58,23 @@ export async function getEntries(req, res) {
 export async function getEntryById(req, res) {
   const { id } = req.params;
   try {
-    const entry = await Entry.findByPk(id);
+    const entry = await Entry.findByPk(id, {
+      include: [
+        {
+          model: Project,
+        },
+        {
+          model: Task,
+        },
+        {
+          model: Timesheet,
+          include: {
+            model: Employee,
+            attributes: { exclude: ["password", "refreshToken", "resetToken"] },
+          },
+        },
+      ],
+    });
     res.status(200).json(entry);
   } catch (err) {
     res

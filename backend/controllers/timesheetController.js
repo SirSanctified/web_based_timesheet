@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { Timesheet, Entry } from "../models/association.js";
+import { Timesheet, Entry, Employee } from "../models/association.js";
 import { sequelize } from "../config/db.js";
 
 // Create and Save a new Timesheet
@@ -30,7 +30,12 @@ export const createTimesheet = async (req, res) => {
 // Retrieve all Timesheets from the database.
 export const getTimesheets = async (req, res) => {
   try {
-    const data = await Timesheet.findAll();
+    const data = await Timesheet.findAll({
+      include: {
+        model: Employee,
+        attributes: { exclude: ["password", "resetToken", "refreshToken"] },
+      },
+    });
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -45,7 +50,17 @@ export const getTimesheetById = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = await Timesheet.findByPk(id);
+    const data = await Timesheet.findByPk(id, {
+      include: [
+        {
+          model: Employee,
+          attributes: { exclude: ["password", "resetToken", "refreshToken"] },
+        },
+        {
+          model: Entry,
+        },
+      ],
+    });
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -113,19 +128,6 @@ export const deleteAllTimesheets = async (req, res) => {
   }
 };
 
-export const getTimesheetEntries = async (req, res) => {
-  try {
-    const data = await Entry.findAll({ where: { timesheetId: req.params.id } });
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({
-      message:
-        err.message ||
-        "Some error occurred while retrieving timesheet entries.",
-    });
-  }
-};
-
 export const approveTimesheet = async (req, res) => {
   const { status } = req.body;
   try {
@@ -135,7 +137,7 @@ export const approveTimesheet = async (req, res) => {
       return res.status(403).json({ message: "Cannot approve yourself" });
     timesheet.status = status;
     console.log(status);
-    await timesheet.save()
+    await timesheet.save();
     res.status(200).json({ message: "Timesheet successifully approved!" });
   } catch (error) {
     console.log(error);

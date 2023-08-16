@@ -5,8 +5,6 @@ import {
   getTaskById,
   updateTask,
   deleteTask,
-  getTaskEmployees,
-  getTaskEntries,
 } from "../controllers/taskController.js";
 
 const taskRouter = Router();
@@ -18,9 +16,5 @@ taskRouter
   .get(getTaskById)
   .put(updateTask)
   .delete(deleteTask);
-
-taskRouter.route("/tasks/:id/employees").get(getTaskEmployees);
-
-taskRouter.route("/tasks/:id/entries").get(getTaskEntries);
 
 export default taskRouter;
