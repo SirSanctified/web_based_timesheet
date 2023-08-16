@@ -54,6 +54,7 @@ export const getAllEmployees = async (axiosInstance) => {
     return err.message;
   }
 };
+
 export const updateEmployeeById = async (axiosInstance, id, payload) => {
   try {
     const response = axiosInstance.put(`/employees/${id}`, payload);
@@ -62,6 +63,7 @@ export const updateEmployeeById = async (axiosInstance, id, payload) => {
     return err.message;
   }
 };
+
 export const deleteEmployeeById = async (axiosInstance, id) => {
   try {
     await axiosInstance.delete(`/employees/${id}`);
@@ -69,35 +71,10 @@ export const deleteEmployeeById = async (axiosInstance, id) => {
     return err.message;
   }
 };
+
 export const getEmployeeById = async (axiosInstance, id) => {
   try {
     const response = await axiosInstance.get(`/employees/${id}`);
-    return response.data;
-  } catch (err) {
-    return err.message;
-  }
-};
-export const getEmployeeProjects = async (axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/employees/${id}/projects`);
-    return response.data;
-  } catch (err) {
-    return err.message;
-  }
-};
-
-export const getEmployeeTasks = async (axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/employees/${id}/tasks`);
-    return response.data;
-  } catch (err) {
-    return err.message;
-  }
-};
-
-export const getEmployeeTimesheets = async (axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/employees/${id}/timesheets`);
     return response.data;
   } catch (err) {
     return err.message;
@@ -111,6 +88,7 @@ export const insertProject = async (axiosInstance, payload) => {
     return err.message;
   }
 };
+
 export const getAllProjects = async (axiosInstance) => {
   try {
     const response = await axiosInstance.get(`/projects`);
@@ -128,6 +106,7 @@ export const updateProjectById = async (axiosInstance, id, payload) => {
     return { error: error?.response?.error || error.message };
   }
 };
+
 export const deleteProjectById = async (axiosInstance, id) => {
   try {
     await axiosInstance.delete(`/projects/${id}`);
@@ -145,24 +124,6 @@ export const getProjectById = async (axiosInstance, id) => {
   }
 };
 
-export const getProjectEmployees = async (axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/projects/${id}/employees`);
-    return response.data;
-  } catch (error) {
-    return { error: error?.response?.error || error.message };
-  }
-};
-
-export const getProjectTasks = async (axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/projects/${id}/tasks`);
-    return response.data;
-  } catch (error) {
-    return { error: error?.response?.error || error.message };
-  }
-};
-
 export const insertTask = async (axiosInstance, payload) => {
   try {
     await axiosInstance.post(`/tasks`, payload);
@@ -170,6 +131,7 @@ export const insertTask = async (axiosInstance, payload) => {
     return err.message;
   }
 };
+
 export const getAllTasks = async (axiosInstance) => {
   try {
     const response = await axiosInstance.get(`/tasks`);
@@ -206,24 +168,6 @@ export const getTaskById = async (axiosInstance, id) => {
   }
 };
 
-export const getTaskEmployees = async (axiosinstance, id) => {
-  try {
-    const response = await axiosinstance.get(`/tasks/${id}/employees`);
-    return response.data;
-  } catch (error) {
-    return { error: error.message };
-  }
-};
-
-export const getTaskEntries = async (axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/tasks/${id}/entries`);
-    return response.data;
-  } catch (error) {
-    return { error: error.message };
-  }
-};
-
 export const insertTimesheet = async (axiosInstance, payload) => {
   try {
     const response = await axiosInstance.post(`/timesheets`, payload);
@@ -232,6 +176,7 @@ export const insertTimesheet = async (axiosInstance, payload) => {
     return err.message;
   }
 };
+
 export const getAllTimesheets = async (axiosInstance) => {
   try {
     const response = await axiosInstance.get(`/timesheets`);
@@ -276,19 +221,17 @@ export const deleteAllTimesheets = async (axiosInstance) => {
 
 export const approveTimesheet = async (axiosInstance, id, payload) => {
   try {
-    const response = await axiosInstance.put(`/timesheets/approve/${id}`, payload);
+    const response = await axiosInstance.put(
+      `/timesheets/approve/${id}`,
+      payload
+    );
     return response.data;
   } catch (error) {
-    return { error: error?.response.error || "An error occured while processing your request." };
-  }
-};
-
-export const getTimesheetEntries = async (axiosInstance, id) => {
-  try {
-    const response = await axiosInstance.get(`/timesheets/entries/${id}`);
-    return response.data;
-  } catch (error) {
-    return { error: error.message };
+    return {
+      error:
+        error?.response.error ||
+        "An error occured while processing your request.",
+    };
   }
 };
 
