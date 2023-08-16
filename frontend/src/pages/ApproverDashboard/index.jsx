@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const ApproverDashboard = () => {
   return (
-    <section className="mt-[5rem] px-[2rem]">
+    <section className="mt-[5rem] mr-4 w-[100%]">
       <h1 className="text-blue-950 font-bold text-2xl underline text-center">
         Approver Dashboard
       </h1>

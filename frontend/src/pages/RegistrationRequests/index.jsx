@@ -27,14 +27,14 @@ const RegistrationRequests = () => {
   };
 
   return (
-    <main className="mt-16 mx-8">
+    <main className="mt-16 mr-4">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
         Available Requests
       </h1>
       {error ? (
         <p className="text-red-500 text-center">{error}</p>
       ) : (
-        <div className="w-fit mx-auto max-w-[100vw] overflow-scroll">
+        <div className="w-fit mx-auto max-w-[100vw] overflow-scroll no-scrollbar">
           {requests.length > 0 ? (
             <table className="border border-gray-500 w-fit rounded-sm mt-2">
               <thead>

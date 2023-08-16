@@ -36,7 +36,8 @@ const Employees = () => {
       {error ? (
         <p className="text-red-500 text-center">{error}</p>
       ) : (
-        <div className="w-fit mx-auto max-w-[100vw] overflow-scroll">
+// add the code bellow
+        <div className="w-fit mx-auto max-w-[100vw] overflow-scroll no-scrollbar">
           <Link
             to="/register"
             className="bg-blue-700 text-white px-4 py-2 rounded-sm align-middle hover:bg-blue-800"

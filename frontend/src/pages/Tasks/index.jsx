@@ -40,7 +40,7 @@ const Tasks = () => {
   };
 
   return (
-    <main className="mt-16 mx-8">
+    <main className="mt-16">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
         Available Tasks
       </h1>

@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
   return (
-    <main className="flex flex-col h-screen overflow-scroll">
+    <main className="flex mr-4 flex-col h-screen overflow-scroll no-scrollbar">
       <section className="mt-16 flex flex-col lg:flex-row gap-4 items-start lg:items-center">
         <div className="flex-1">
-          <h1 className="text-4xl font-bold text-blue-950">Manage</h1>
-          <p className="text-2xl font-medium mt-3 text-black">
+          <h1 className="text-2xl font-bold text-blue-950">Manage</h1>
+          <p className="text-lg font-medium mt-3 text-black">
             Your employees, timesheets, projects, tasks, and entries in one
             place
           </p>
@@ -34,10 +34,10 @@ const Home = () => {
           <img src={smiling} alt="" className="rounded w-[500px] h-auto " />
         </div>
         <div className="flex-1">
-          <h1 className="text-4xl font-bold text-blue-950">
+          <h1 className="text-lg font-bold text-blue-950">
             Enjoy the flexibility
           </h1>
-          <p className="text-2xl font-medium mt-3 text-black">
+          <p className="text-normal font-medium mt-3 text-black">
             Embrace the freedom to work anywhere, anytime, on any device; manage
             your workday from wherever you are. No more endless paperwork, no
             more chasing timesheets, no more hassle. Enjoy the flexibility, feel
@@ -54,10 +54,10 @@ const Home = () => {
       </section>
       <section className="mt-16 flex flex-col lg:flex-row gap-4 items-center">
         <div className="flex-1">
-          <h1 className="text-4xl font-bold text-blue-950">
+          <h1 className="text-lg font-bold text-blue-950">
             Manage your employees
           </h1>
-          <p className="text-2xl font-medium mt-3 text-black">
+          <p className="text-normal font-medium mt-3 text-black">
             Tired of managing your employees&#39; timesheets, projects, tasks,
             and entries in different places? Manage them all in one place with
             Manage. Let your employees focus on what they do best, and let
@@ -76,10 +76,10 @@ const Home = () => {
         </div>
       </section>
       <section className="my-16 flex flex-col gap-4 items-start lg:items-center">
-        <h1 className="text-4xl font-bold text-blue-950">
+        <h1 className="text-2xl font-bold text-blue-950">
           Join the future of work
         </h1>
-        <p className="text-2xl font-medium mt-3 text-black max-w-[50ch] text-start lg:text-center">
+        <p className="text-normal font-medium mt-3 text-black max-w-[50ch] text-start lg:text-center">
           Manage is the future of work. It&#39;s the only tool you&#39;ll ever
           need to manage your employees, timesheets, projects, tasks, and
           entries. It&#39;s the only tool you&#39;ll ever need to manage your

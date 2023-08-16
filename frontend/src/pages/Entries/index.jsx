@@ -37,7 +37,7 @@ const Entries = () => {
       {error ? (
         <p className="text-red-500 text-center">{error}</p>
       ) : (
-        <div className="w-fit mx-auto max-w-[100vw] overflow-scroll">
+        <div className="w-fit mx-auto max-w-[100vw] overflow-scroll no-scrollbar">
           <Link
             to="/entries/add"
             className="bg-blue-700 text-white px-2 py-1 rounded-sm align-middle hover:bg-blue-800"

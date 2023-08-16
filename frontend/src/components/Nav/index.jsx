@@ -22,7 +22,7 @@ const Nav = () => {
   const [showNav, setShowNav] = useState(false);
 
   return (
-    <nav className="h-max min-h-[100vh] bg-blue-500 w-fit min-w-max py-4 px-2 rounded-r-lg overflow-scroll">
+    <nav className="h-max min-h-[100vh] bg-blue-500 w-fit min-w-max py-4 px-2 rounded-r-lg overflow-scroll no-scrollbar">
       { showNav ? (
         <FaAngleDoubleLeft
           onClick={() => setShowNav(!showNav)}

@@ -86,7 +86,7 @@ const Timesheets = () => {
                         </Link>
                       </td>
                       <td className="border border-gray-500 p-2 align-middle">
-                        {employee.firstName} {employee.lastName}
+                        {employee?.firstName} {employee?.lastName}
                       </td>
                       <td className="border border-gray-500 p-2 align-middle">
                         {timesheet.date}

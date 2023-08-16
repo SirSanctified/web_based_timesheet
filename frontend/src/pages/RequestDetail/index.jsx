@@ -38,7 +38,7 @@ const RequestDetail = () => {
   };
 
   return (
-    <main className="px-8 pt-16">
+    <main className="mr-4 w-[100%] pt-16">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
         Employee Registration Request
       </h1>
