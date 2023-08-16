@@ -17,7 +17,7 @@ import requestRouter from "./routes/requestRoutes.js";
 import handleRefreshToken from "./controllers/refreshTokenController.js";
 import { createRequest } from "./controllers/requestController.js";
 
-const PORT = process.env.PORT || 3500;
+const PORT = process.env.PORT || 4500;
 const app = express();
 const router = Router();
 

@@ -1,17 +1,15 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { updateEmployeeById, deleteEmployeeById, getEmployeeById } from "../../api";
+import {
+  updateEmployeeById,
+  deleteEmployeeById,
+  getEmployeeById,
+} from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const EmployeeDetail = () => {
   const [errors, setErrors] = useState({});
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [nationalId, setNationalId] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [role, setRole] = useState("general");
-  const [isActive, setIsActive] = useState(true);
+  const [employee, setEmployee] = useState({});
   const [formError, setFormError] = useState(false);
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
@@ -21,37 +19,30 @@ const EmployeeDetail = () => {
     const fetchEmployee = async () => {
       const response = await getEmployeeById(axioPrivate, id);
       if (response && !response.error) {
-        setFirstName(response.firstName);
-        setLastName(response.lastName);
-        setNationalId(response.nationalId);
-        setEmail(response.email);
-        setPhone(response.phone);
-        setRole(response.role);
-        setIsActive(response.isActive);
+        setEmployee(response);
       }
     };
     fetchEmployee();
   }, [axioPrivate, id]);
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
 
     // validate the fields
-    if (!firstName) {
+    if (!employee?.firstName) {
       errors.firstName = "First name is required for this employee";
     }
 
-    if (!lastName) {
+    if (!employee?.lastName) {
       errors.lastName = "The last name is required for this employee";
     }
 
-    if (!/^(\d{1,3}\s?)?0?\d{2}\s?\d{3}\s?\d{4}$/.test(phone)) {
+    if (!/^(\d{1,3}\s?)?0?\d{2}\s?\d{3}\s?\d{4}$/.test(employee?.phone)) {
       errors.phone = "The phone number is not valid";
     }
 
-    if (!/^[0-9]{2}-[0-9]{6}[a-zA-z]{1}[0-9]{2}$/.test(nationalId)) {
+    if (!/^[0-9]{2}-[0-9]{6}[a-zA-z]{1}[0-9]{2}$/.test(employee?.nationalId)) {
       errors.nationalId = "The national ID is not valid";
     }
 
@@ -61,13 +52,13 @@ const EmployeeDetail = () => {
     } else {
       // otherwise create the employee and redirect
       const response = await updateEmployeeById(axioPrivate, id, {
-        firstName,
-        lastName,
-        phone,
-        nationalId,
-        email,
-        role,
-        isActive,
+        firstName: employee.firstName,
+        lastName: employee.lastName,
+        email: employee.email,
+        nationalId: employee.nationalId,
+        phone: employee.phone,
+        role: employee.role,
+        isActive: employee.isActive,
       });
       if (response) {
         errors.form = "Something went wrong, please try again";
@@ -90,9 +81,9 @@ const EmployeeDetail = () => {
   };
 
   return (
-    <main className="pt-16 w-[100%]">
+    <main className="pt-16 w-[100%] mr-4">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
-        Update Employee
+        Update {employee?.firstName} {employee?.lastName}&#39;s Details
       </h1>
       {formError && setTimeout(() => setFormError(false), 3000) && (
         <p className="bg-red-500 text-white px-4 py-2 rounded absolute top-[15%] right-[5%]">
@@ -108,9 +99,11 @@ const EmployeeDetail = () => {
             type="text"
             id="firstName"
             name="firstName"
-            value={firstName}
+            value={employee?.firstName}
             placeholder="Project Name"
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) =>
+              setEmployee((prev) => prev = { ...prev, firstName: e.target.value })
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.firstName && (
@@ -125,9 +118,11 @@ const EmployeeDetail = () => {
             type="text"
             id="lastName"
             name="lastName"
-            value={lastName}
+            value={employee?.lastName}
             placeholder="Last Name"
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) =>
+              setEmployee((prev) => prev = { ...prev, lastName: e.target.value })
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.lastName && (
@@ -142,8 +137,10 @@ const EmployeeDetail = () => {
             type="tel"
             id="phone"
             name="phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={employee?.phone}
+            onChange={(e) =>
+              setEmployee((prev) => prev = {...prev, phone: e.target.value})
+            }
             placeholder="Employee Phone Number"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -159,8 +156,10 @@ const EmployeeDetail = () => {
             type="text"
             id="nationalId"
             name="nationalId"
-            value={nationalId}
-            onChange={(e) => setNationalId(e.target.value)}
+            value={employee?.nationalId}
+            onChange={(e) =>
+              setEmployee((prev) => prev = { ...prev, nationalId: e.target.value })
+            }
             placeholder="Employee National ID"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -176,8 +175,10 @@ const EmployeeDetail = () => {
             type="email"
             id="email"
             name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={employee?.email}
+            onChange={(e) =>
+              setEmployee((prev) => prev = { ...prev, email: e.target.value })
+            }
             placeholder="Employee Email"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -192,15 +193,17 @@ const EmployeeDetail = () => {
           <select
             name="role"
             id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+            value={employee?.role}
+            onChange={(e) =>
+              setEmployee((prev) => prev = { ...prev, role: e.target.value })
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           >
             <option value="admin">Admin</option>
             <option value="approver">Approver</option>
             <option value="general">General</option>
           </select>
-          </p>
+        </p>
         <p className="flex gap-4 mt-4">
           <label htmlFor="isActive" className="text-[18px] mb-1">
             Active:
@@ -209,9 +212,9 @@ const EmployeeDetail = () => {
             type="checkbox"
             id="isActive"
             name="isActive"
-            value={isActive}
-            checked={isActive}
-            onClick={() => setIsActive(!isActive)}
+            value={employee?.isActive}
+            checked={employee?.isActive}
+            onClick={() => setEmployee((prev) => prev = { ...prev, isActive: !prev.isActive })}
             className="w-8 h-8 border border-gray-500 rounded-sm"
           />
           {errors?.isActive && (
@@ -219,21 +222,77 @@ const EmployeeDetail = () => {
           )}
         </p>
         <div className="flex items-center justify-around mt-4 [w-100%]">
-            <button
-              type="submit"
-              className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"
-            >
-              Update
-            </button>
-            <button
-              type="button"
-              onClick={handleDelete}
-              className="bg-red-500 hover:bg-red-900 text-white rounded-sm px-4 py-2"
-            >
-              Delete
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"
+          >
+            Update
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="bg-red-500 hover:bg-red-900 text-white rounded-sm px-4 py-2"
+          >
+            Delete
+          </button>
+        </div>
       </form>
+      {employee?.timesheets?.length > 0 && (
+        <section className="mt-8 w-full md:w-1/2 pr-4 mx-auto">
+          <h1 className="py-4 text-center text-blue-950 text-xl font-semibold">
+            Timesheets by {employee.firstName}
+          </h1>
+          <table className="w-[100%]">
+            <thead>
+              <tr className="border border-gray-500">
+                <td className=" py-1 px-2 font-semibold">Date</td>
+                <td className=" py-1 px-2 font-semibold">Hours</td>
+                <td className=" py-1 px-2 font-semibold">Status</td>
+              </tr>
+            </thead>
+            <tbody>
+              {employee.timesheets.map((timesheet) => (
+                <tr key={timesheet.id} className="border border-gray-500">
+                  <td className=" py-1 px-2">{timesheet.date}</td>
+                  <td className=" py-1 px-2">{timesheet.hours}</td>
+                  <td className=" py-1 px-2">{timesheet.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Link
+            to={"/timesheets/all"}
+            className="mt-4 block w-fit py-2 px-4 bg-blue-700 hover:to-blue-900 text-white rounded-sm"
+          >
+            Go To All Timesheets
+          </Link>
+        </section>
+      )}
+      {employee?.tasks?.length > 0 && (
+        <section className="mt-4 w-full md:w-1/2 pr-4 mx-auto">
+          <h1 className="py-4 text-center text-blue-950 text-xl font-semibold">
+            Tasks Assigned
+          </h1>
+          <table className="w-[100%]">
+            <thead>
+              <tr className="border border-gray-500">
+                <td className=" py-1 px-2 font-semibold">Name</td>
+                <td className=" py-1 px-2 font-semibold">Start Date</td>
+                <td className=" py-1 px-2 font-semibold">Status</td>
+              </tr>
+            </thead>
+            <tbody>
+              {employee.tasks.map((task) => (
+                <tr key={task.id} className="border border-gray-500">
+                  <td className=" py-1 px-2">{task.taskName}</td>
+                  <td className=" py-1 px-2">{task.taskStartDate}</td>
+                  <td className=" py-1 px-2">{task.taskStatus}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
     </main>
   );
 };

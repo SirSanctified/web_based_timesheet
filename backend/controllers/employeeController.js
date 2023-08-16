@@ -1,4 +1,4 @@
-import { Employee, Project, Task, Timesheet } from "../models/association.js";
+import { Employee, Timesheet } from "../models/association.js";
 
 export const getEmployees = async (req, res) => {
   try {
@@ -19,20 +19,16 @@ export const getEmployeeById = async (req, res) => {
       attributes: {
         exclude: ["password", "refreshToken", "resetToken"],
       },
-      include: [
-        {
-          model: Project,
-        },
-        {
-          model: Task,
-        },
-        {
-          model: Timesheet,
-        },
-      ],
     });
-    res.status(200).json(employee);
+    const tasks = await employee.getTasks();
+    const timesheets = await Timesheet.findAll({
+      where: { employeeId: employee.id },
+    });
+    employee.tasks = tasks;
+    employee.timesheets = timesheets;
+    res.status(200).json({...employee.dataValues, timesheets: timesheets, tasks: tasks});
   } catch (error) {
+    console.log(error);
     res.status(404).json({ message: error.message });
   }
 };
