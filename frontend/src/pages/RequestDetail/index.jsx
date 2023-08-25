@@ -4,11 +4,13 @@ import { deleteRequestById, getRequestById } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const RequestDetail = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [nationalId, setNationalId] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [request, setRequest] = useState({
+    firstName: "",
+    lastName: "",
+    nationalId: "",
+    email: "",
+    phone: "",
+  })
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -17,11 +19,7 @@ const RequestDetail = () => {
     const fetchRequest = async () => {
       const response = await getRequestById(axioPrivate, id);
       if (response && !response.error) {
-        setFirstName(response.firstName);
-        setLastName(response.lastName);
-        setNationalId(response.nationalId);
-        setEmail(response.email);
-        setPhone(response.phone);
+        setRequest(response);
       }
     };
     fetchRequest();
@@ -51,10 +49,10 @@ const RequestDetail = () => {
             type="text"
             id="firstName"
             name="firstName"
-            value={firstName}
+            value={request.firstName}
             placeholder="Project Name"
             readOnly
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => setRequest((prev) => ({ ...prev, firstName: e.target.value }))}
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
         </p>
@@ -67,9 +65,9 @@ const RequestDetail = () => {
             id="lastName"
             name="lastName"
             readOnly
-            value={lastName}
+            value={request.lastName}
             placeholder="Last Name"
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => setRequest((prev) => ({ ...prev, lastName: e.target.value }))}
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
         </p>
@@ -82,8 +80,8 @@ const RequestDetail = () => {
             id="phone"
             readOnly
             name="phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={request.phone}
+            onChange={(e) => setRequest((prev) => ({ ...prev, phone: e.target.value }))}
             placeholder="Employee Phone Number"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -97,8 +95,8 @@ const RequestDetail = () => {
             id="nationalId"
             name="nationalId"
             readOnly
-            value={nationalId}
-            onChange={(e) => setNationalId(e.target.value)}
+            value={request.nationalId}
+            onChange={(e) => setRequest((prev) => ({ ...prev, nationalId: e.target.value }))}
             placeholder="Employee National ID"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -112,8 +110,8 @@ const RequestDetail = () => {
             id="email"
             readOnly
             name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={request.email}
+            onChange={(e) => setRequest((prev) => ({ ...prev, email: e.target.value }))}
             placeholder="Employee Email"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />

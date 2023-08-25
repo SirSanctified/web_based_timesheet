@@ -1,18 +1,25 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getAllTimesheets, insertEntry, getAllProjects, getAllTasks } from "../../api";
+import {
+  getAllTimesheets,
+  insertEntry,
+  getAllProjects,
+  getAllTasks,
+} from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const AddEntry = () => {
   const [errors, setErrors] = useState({});
   const [timesheets, setTimesheets] = useState([]);
-  const [timesheetId, setTimesheetId] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [taskId, setTaskId] = useState(null);
   const [projects, setProjects] = useState([]);
-  const [projectId, setProjectId] = useState(null);
-  const [date, setDate] = useState("");
-  const [hours, setHours] = useState(0);
+  const [entry, setEntry] = useState({
+    timesheetId: null,
+    taskId: null,
+    projectId: null,
+    date: "",
+    hours: 0,
+  });
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
 
@@ -32,15 +39,15 @@ const AddEntry = () => {
     const errors = {};
 
     // validate the fields
-    if (!timesheetId) {
+    if (!entry.timesheetId) {
       errors.timesheetId = "The timesheet must belong to an timesheet";
     }
 
-    if (!date) {
+    if (!entry.date) {
       errors.date = "The date is required for this timesheet";
     }
 
-    if (!hours) {
+    if (!entry.hours) {
       errors.hours = "The hours are required for this timesheet";
     } else if (typeof hours !== "number") {
       errors.hours = "Hours should be a number";
@@ -51,11 +58,7 @@ const AddEntry = () => {
       setErrors(errors);
     }
     // otherwise create the timesheet and redirect
-    const response = await insertEntry(axioPrivate, {
-      timesheetId,
-      date,
-      hours,
-    });
+    const response = await insertEntry(axioPrivate, { ...entry });
     if (response?.error) {
       errors.form = "Something went wrong, please try again";
     } else {
@@ -75,8 +78,10 @@ const AddEntry = () => {
           </label>
           <select
             name="timesheetId"
-            value={timesheetId}
-            onChange={(e) => setTimesheetId(e.target.value)}
+            value={entry.timesheetId}
+            onChange={(e) =>
+              setEntry((prev) => ({ ...prev, timesheetId: e.target.value }))
+            }
             id="timesheetId"
             className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
           >
@@ -105,8 +110,10 @@ const AddEntry = () => {
           </label>
           <select
             name="projectId"
-            value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
+            value={entry.projectId}
+            onChange={(e) =>
+              setEntry((prev) => ({ ...prev, projectId: e.target.value }))
+            }
             id="projectId"
             className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
           >
@@ -135,8 +142,10 @@ const AddEntry = () => {
           </label>
           <select
             name="taskId"
-            value={taskId}
-            onChange={(e) => setTaskId(e.target.value)}
+            value={entry.taskId}
+            onChange={(e) =>
+              setEntry((prev) => ({ ...prev, taskId: e.target.value }))
+            }
             id="taskId"
             className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
           >
@@ -167,8 +176,10 @@ const AddEntry = () => {
             type="date"
             id="date"
             name="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={entry.date}
+            onChange={(e) =>
+              setEntry((prev) => ({ ...prev, date: e.target.value }))
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.date && <span className="text-red-500">{errors.date}</span>}
@@ -181,8 +192,10 @@ const AddEntry = () => {
             type="number"
             id="hours"
             name="hours"
-            value={hours}
-            onChange={(e) => setHours(parseInt(e.target.value))}
+            value={entry.hours}
+            onChange={(e) =>
+              setEntry((prev) => ({ ...prev, hours: parseInt(e.target.value) }))
+            }
             placeholder="Timesheet hours"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />

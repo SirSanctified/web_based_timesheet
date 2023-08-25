@@ -1,4 +1,4 @@
-import { Project } from "../models/association.js";
+import { Project, Task, Entry, Employee } from "../models/association.js";
 import { v4 as uuidv4 } from "uuid";
 import { sequelize } from "../config/db.js";
 

@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import { getAllEntries, deleteEntryById, getAllTimesheets } from "../../api";
+import { getAllEntries, deleteEntryById } from "../../api";
 import { Link } from "react-router-dom";
 
 const Entries = () => {
   const [entries, setEntries] = useState([]);
   const [error, setError] = useState("");
-  const [timesheets, setTimesheets] = useState([]);
   const axioPrivate = useAxiosPrivate();
 
   useEffect(() => {
     (async () => {
       const allEntries = await getAllEntries(axioPrivate);
-      const allTimesheets = await getAllTimesheets(axioPrivate);
       allEntries?.error ? setError(allEntries.error) : setEntries(allEntries);
-      allTimesheets?.error
-        ? setError(allTimesheets.error)
-        : setTimesheets(allTimesheets);
     })();
   }, []);
 
@@ -45,69 +40,87 @@ const Entries = () => {
             Add New Entry
           </Link>
           {entries.length > 0 ? (
-          <table className="border border-gray-500 w-fit rounded-sm mt-2">
-            <thead>
-              <tr className="border border-gray-500">
-                <td className="border border-gray-500 p-2 align-middle"></td>
-                <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
-                  Timesheet
-                </td>
-                <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
-                  Date
-                </td>
-                <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
-                  Hours
-                </td>
+            <table className="border border-gray-500 w-fit rounded-sm mt-2">
+              <thead>
+                <tr className="border border-gray-500">
+                  <td className="border border-gray-500 p-2 align-middle"></td>
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
+                    Employee
+                  </td>
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
+                    Project
+                  </td>
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
+                    Task
+                  </td>
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
+                    Timesheet
+                  </td>
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
+                    Date
+                  </td>
+                  <td className="border border-gray-500 p-2 align-middle text-xl font-bold text-blue-950">
+                    Hours
+                  </td>
 
-                <td></td>
-              </tr>
-            </thead>
-            <tbody>
-              {entries &&
-                entries.map((entry, index) => {
-                  const timesheet = timesheets?.find(
-                    (emp) => emp.id === entry.timesheetId
-                  );
-                  return (
-                    <tr key={entry.id} className="border border-gray-500">
-                      <td className="border border-gray-500 p-2 align-middle md:min-w-[100px]">
-                        <Link
-                          to={`/entries/${entry.id}`}
-                          className="text-blue-700 underline font-bold align-middle"
-                        >
-                          {index + 1}
-                        </Link>
-                      </td>
-                      <td className="border border-gray-500 p-2 align-middle">
-                        {timesheet.date} for {timesheet.hours}
-                      </td>
-                      <td className="border border-gray-500 p-2 align-middle">
-                        {entry.date}
-                      </td>
-                      <td className="border border-gray-500 p-2 align-middle">
-                        {entry.hours}
-                      </td>
-                      <td className="border border-gray-500 p-2 align-middle">
-                        <Link
-                          to={`/entries/${entry.id}`}
-                          className="text-white bg-blue-700 rounded-sm px-4 py-1 hover:bg-blue-900"
-                        >
-                          Edit
-                        </Link>
-                      </td>
-                      <td className="border border-gray-500 p-2 align-middle">
-                        <button
-                          onClick={() => handleDelete(entry.id)}
-                          className="text-white bg-red-500 rounded-sm px-2 py-1 hover:bg-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </table> ) : (
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                {entries &&
+                  entries.map((entry, index) => {
+                    return (
+                      <tr key={entry.id} className="border border-gray-500">
+                        <td className="border border-gray-500 p-2 align-middle md:min-w-[100px]">
+                          <Link
+                            to={`/entries/${entry.id}`}
+                            className="text-blue-700 underline font-bold align-middle"
+                          >
+                            {index + 1}
+                          </Link>
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          {entry.Timesheet?.Employee?.firstName}{" "}
+                          {entry.Timesheet?.Employee?.lastName}
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          {entry.Project?.projectName}
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          {entry.Task?.taskName}
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          On {entry.Timesheet?.date} for{" "}
+                          {entry.Timesheet?.hours} hours
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          {entry.date}
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          {entry.hours}
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          <Link
+                            to={`/entries/${entry.id}`}
+                            className="text-white bg-blue-700 rounded-sm px-4 py-1 hover:bg-blue-900"
+                          >
+                            Edit
+                          </Link>
+                        </td>
+                        <td className="border border-gray-500 p-2 align-middle">
+                          <button
+                            onClick={() => handleDelete(entry.id)}
+                            className="text-white bg-red-500 rounded-sm px-2 py-1 hover:bg-red-900"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          ) : (
             <p className="text-center text-blue-950 text-xl font-bold mt-4">
               No entries available
             </p>

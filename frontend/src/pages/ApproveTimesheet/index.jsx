@@ -1,19 +1,10 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
-import {
-  approveTimesheet,
-  getTimesheetById,
-  getTimesheetEntries,
-  getEmployeeById,
-} from "../../api";
+import { approveTimesheet, getTimesheetById } from "../../api";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ApproveTimesheet = () => {
   const [timesheet, setTimesheet] = useState();
-  const [timesheetEntries, setTimesheetEntries] = useState([]);
-  const [date, setDate] = useState("");
-  const [hours, setHours] = useState("");
-  const [employee, setEmployee] = useState("");
   const [error, setError] = useState("");
   const [updated, setUpdated] = useState(false);
   const axioPrivate = useAxiosPrivate();
@@ -23,26 +14,13 @@ const ApproveTimesheet = () => {
   useEffect(() => {
     (async () => {
       const receivedTimesheet = await getTimesheetById(axioPrivate, id);
-      const timesheetOwner = await getEmployeeById(
-        axioPrivate,
-        receivedTimesheet.employeeId
-      );
-      const entries = await getTimesheetEntries(axioPrivate, id);
       if (receivedTimesheet.error) {
         setError(receivedTimesheet.error);
       } else {
         setTimesheet(receivedTimesheet);
-        setDate(receivedTimesheet.date);
-        setHours(receivedTimesheet.hours);
       }
-      timesheetOwner?.error
-        ? setError(timesheetOwner.error)
-        : setEmployee(timesheetOwner);
-      entries?.error ? setError(entries.error) : setTimesheetEntries(entries);
     })();
   }, []);
-
-  const employeeName = employee?.firstName + " " + employee?.lastName || "";
 
   const handleApprove = async (e) => {
     e.preventDefault();
@@ -72,8 +50,12 @@ const ApproveTimesheet = () => {
   return (
     <main className="mt-16 w-[100%]">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
-        Edit Timesheet
+        Approve {timesheet?.Employee?.firstName}&#39;s Timesheet
       </h1>
+      <p className="text-blue-950 font-normal text-center mb-4 w-100 md:w-1/2 mx-auto">
+        Note that the timesheet is only valid if it&#39;s number of hours are
+        equal to the total of it&#39;s associated entries.
+      </p>
       {error && setTimeout(() => setError(""), 3000) && (
         <p className="text-text bg-red-500 px-4 py-1 rounded absolute top-8 rigt-4 text-center">
           {error}
@@ -90,7 +72,7 @@ const ApproveTimesheet = () => {
           <input
             name="employeeId"
             id="employeeId"
-            value={employeeName}
+            value={`${timesheet?.Employee?.firstName} ${timesheet?.Employee?.firstName}`}
             readOnly
             className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
           ></input>
@@ -101,8 +83,7 @@ const ApproveTimesheet = () => {
             type="date"
             name="date"
             id="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={timesheet?.date}
             readOnly
             className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
           />
@@ -113,9 +94,8 @@ const ApproveTimesheet = () => {
             type="number"
             name="hours"
             id="hours"
-            value={hours}
+            value={timesheet?.hours}
             readOnly
-            onChange={(e) => setHours(e.target.value)}
             className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
           />
         </div>
@@ -135,27 +115,33 @@ const ApproveTimesheet = () => {
           </button>
         </div>
       </form>
-      {timesheetEntries && (
-        <h1 className="text-blue-950 text-2xl font-bold mt-8 w-fit mx-auto">
-          Timesheet Entries
-        </h1>
+      {timesheet?.Entries?.length > 0 && (
+        <section className="mt-4 w-full md:w-1/2 pr-4 mx-auto">
+          <h1 className="py-4 text-center text-blue-950 text-xl font-semibold">
+            Timesheet Entries
+          </h1>
+          <table className="w-[100%]">
+            <thead>
+              <tr className="border border-gray-500">
+                <td className=" py-1 px-2 font-semibold">Date</td>
+                <td className=" py-1 px-2 font-semibold">Hours</td>
+                <td className=" py-1 px-2 font-semibold">Task</td>
+                <td className=" py-1 px-2 font-semibold">Project</td>
+              </tr>
+            </thead>
+            <tbody>
+              {timesheet.Entries.map((entry) => (
+                <tr key={entry.id} className="border border-gray-500">
+                  <td className=" py-1 px-2">{entry.date}</td>
+                  <td className=" py-1 px-2">{entry.hours}</td>
+                  <td className=" py-1 px-2">{entry?.Task?.taskName}</td>
+                  <td className=" py-1 px-2">{entry?.Project?.projectName}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
       )}
-      {timesheetEntries &&
-        timesheetEntries.map((timesheetEntry, index) => (
-          <div
-            key={timesheetEntry.id}
-            className="flex flex-col items-center mt-4 list-none w-[100%] md:w-[50%] md:mx-auto"
-          >
-            <div className="flex border gap-2 px-4 py-2 border-gray-500 w-[100%]">
-              <p className="text-blue-950 font-normal text-xl">
-                {index + 1}. On {timesheetEntry.date}
-              </p>
-              <p className="text-blue-950 font-normal text-xl">
-                for {timesheetEntry.hours}
-              </p>
-            </div>
-          </div>
-        ))}
     </main>
   );
 };

@@ -1,4 +1,4 @@
-import { Task } from "../models/association.js";
+import { Task, Employee, Project, Entry } from "../models/association.js";
 import { v4 as uuidv4 } from "uuid";
 import { sequelize } from "../config/db.js";
 
@@ -59,6 +59,7 @@ export const getTaskById = async (req, res) => {
     });
     res.status(200).json(task);
   } catch (error) {
+    lo
     res.status(404).json({ message: error.message });
   }
 };

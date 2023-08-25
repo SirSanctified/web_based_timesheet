@@ -1,5 +1,11 @@
 import { v4 as uuidv4 } from "uuid";
-import { Timesheet, Entry, Employee } from "../models/association.js";
+import {
+  Timesheet,
+  Entry,
+  Employee,
+  Task,
+  Project,
+} from "../models/association.js";
 import { sequelize } from "../config/db.js";
 
 // Create and Save a new Timesheet
@@ -56,12 +62,19 @@ export const getTimesheetById = async (req, res) => {
           model: Employee,
           attributes: { exclude: ["password", "resetToken", "refreshToken"] },
         },
-        {
-          model: Entry,
-        },
       ],
     });
-    res.status(200).json(data);
+    const Entries = await Entry.findAll({
+      where: { timesheetId: data.id },
+      include: [
+        {
+          model: Task,
+        },
+        { model: Project },
+      ],
+    });
+    console.log(Entries);
+    res.status(200).json({ ...data.dataValues, Entries: Entries });
   } catch (err) {
     res.status(500).json({
       message: "Error retrieving Timesheet with id=" + id,

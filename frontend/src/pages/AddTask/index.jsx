@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { MultiSelect } from "react-multi-select-component";
 import { getAllProjects, insertTask, getAllEmployees } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
@@ -8,12 +9,14 @@ const AddTask = () => {
   const [employees, setEmployees] = useState([]);
   const [projects, setProjects] = useState([]);
   const [taskEmployees, setTaskEmployees] = useState([]);
-  const [projectId, setProjectId] = useState("");
-  const [taskStartDate, setTaskStartDate] = useState(Date.now());
-  const [taskEndDate, setTaskEndDate] = useState("");
-  const [taskName, setTaskName] = useState("");
-  const [taskDescription, setTaskDescription] = useState("");
-  const [taskStatus, setTaskStatus] = useState("on hold");
+  const [task, setTask] = useState({
+    projectId: "",
+    taskStartDate: Date.now(),
+    taskEndDate: "",
+    taskName: "",
+    taskDescription: "",
+    taskStatus: "on hold",
+  });
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
 
@@ -26,28 +29,26 @@ const AddTask = () => {
     })();
   }, []);
 
+  const options = employees.map((employee) => ({
+    label: `${employee.firstName} ${employee.lastName}`,
+    value: employee.id,
+  }));
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = {};
 
     // validate the fields
-    if (!projectId) {
+    if (!task.projectId) {
       errors.projectId = "The task must belong to a project";
     }
 
-    if (!taskStartDate) {
+    if (!task.taskStartDate) {
       errors.taskStartDate = "The start date is required for this task";
     }
 
-    if (!taskName) {
+    if (!task.taskName) {
       errors.taskName = "The name is required for this task";
-    }
-
-    if (
-      !["on hold", "in progress", "completed", "cancelled"].includes(taskStatus)
-    ) {
-      errors.taskStatus =
-        "The status must be one of the following: in progress, on hold, completed, or cancelled";
     }
 
     // return data if we have errors
@@ -56,13 +57,10 @@ const AddTask = () => {
     } else {
       // otherwise create the task and redirect
       const response = await insertTask(axioPrivate, {
+        ...task,
         employees: taskEmployees,
-        taskName,
-        taskDescription,
-        taskStartDate,
-        taskEndDate: taskEndDate || null,
-        taskStatus,
-        projectId: projectId || null,
+        taskEndDate: task.taskEndDate || null,
+        projectId: task.projectId || null,
       });
       if (response?.error) {
         errors.form = "Something went wrong, please try again";
@@ -84,8 +82,10 @@ const AddTask = () => {
           </label>
           <select
             name="projectId"
-            value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
+            value={task.projectId}
+            onChange={(e) =>
+              setTask((prev) => ({ ...prev, projectId: e.target.value }))
+            }
             id="projectId"
             className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
           >
@@ -112,36 +112,12 @@ const AddTask = () => {
           <label htmlFor="taskEmployees" className="text-[18px] mb-1">
             Employees Working on Task:
           </label>
-          <select
-            name="taskEmployees"
+          <MultiSelect
+            options={options}
             value={taskEmployees}
-            onChange={(e) =>
-              setTaskEmployees(() => {
-                Array.from(
-                  e.target.selectedOptions,
-                  (option) => option.value
-                );
-              })
-            }
-            id="taskEmployees"
-            multiple={true}
-            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
-          >
-            <option value="" className="px-2 py-2 border border-gray-500">
-              Select employees
-            </option>
-            {employees &&
-              !employees.error &&
-              Array.from(employees)?.map((employee) => (
-                <option
-                  key={employee.id}
-                  value={employee.id}
-                  className="px-2 py-2 border border-gray-500"
-                >
-                  {employee.firstName} {employee.lastName}
-                </option>
-              ))}
-          </select>
+            onChange={setTaskEmployees}
+            labelledBy="Select Employees"
+          />
           {errors?.taskEmployees && (
             <span className="text-red-500">{errors.taskEmployees}</span>
           )}
@@ -154,8 +130,10 @@ const AddTask = () => {
             type="text"
             id="taskName"
             name="taskName"
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
+            value={task.taskName}
+            onChange={(e) =>
+              setTask((prev) => ({ ...prev, taskName: e.target.value }))
+            }
             placeholder="Task Name"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -170,8 +148,10 @@ const AddTask = () => {
           <textarea
             id="taskDescription"
             name="taskDescription"
-            value={taskDescription}
-            onChange={(e) => setTaskDescription(e.target.value)}
+            value={task.taskDescription}
+            onChange={(e) =>
+              setTask((prev) => ({ ...prev, taskDescription: e.target.value }))
+            }
             placeholder="Task Description"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -187,8 +167,10 @@ const AddTask = () => {
             type="date"
             id="taskStartDate"
             name="taskStartDate"
-            value={taskStartDate}
-            onChange={(e) => setTaskStartDate(e.target.value)}
+            value={task.taskStartDate}
+            onChange={(e) =>
+              setTask((prev) => ({ ...prev, taskStartDate: e.target.value }))
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.taskStartDate && (
@@ -203,8 +185,10 @@ const AddTask = () => {
             type="date"
             id="taskEndDate"
             name="taskEndDate"
-            value={taskEndDate}
-            onChange={(e) => setTaskEndDate(e.target.value)}
+            value={task.taskEndDate}
+            onChange={(e) =>
+              setTask((prev) => ({ ...prev, taskEndDate: e.target.value }))
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.taskEndDate && (
@@ -215,15 +199,21 @@ const AddTask = () => {
           <label htmlFor="taskStatus" className="text-[18px] mb-1">
             Entry Task Status
           </label>
-          <input
-            type="text"
+          <select
             id="taskStatus"
             name="taskStatus"
-            value={taskStatus}
-            onChange={(e) => setTaskStatus(parseInt(e.target.value))}
+            value={task.taskStatus}
+            onChange={(e) =>
+              setTask((prev) => ({ ...prev, taskStatus: e.target.value }))
+            }
             placeholder="Task Status (on hold, in progress, completed, cancelled)"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
-          />
+          >
+            <option value="on hold">On Hold</option>
+            <option value="in progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
           {errors?.taskStatus && (
             <span className="text-red-500">{errors.taskStatus}</span>
           )}

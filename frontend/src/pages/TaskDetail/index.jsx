@@ -13,7 +13,7 @@ const TaskDetail = () => {
   const [errors, setErrors] = useState({});
   const [employees, setEmployees] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [taskEmployees, setTaskEmployees] = useState([]);
+  const [taskEmployees, setTaskEmployees] = useState([""]);
   const [projectId, setProjectId] = useState("");
   const [taskStartDate, setTaskStartDate] = useState(Date.now());
   const [taskEndDate, setTaskEndDate] = useState("");
@@ -28,16 +28,16 @@ const TaskDetail = () => {
     (async () => {
       const allEmployees = await getAllEmployees(axioPrivate);
       const allProjects = await getAllProjects(axioPrivate);
-      const task = await getTaskById(axioPrivate, id);
+      const taskData = await getTaskById(axioPrivate, id);
       setEmployees(allEmployees);
       setProjects(allProjects);
-      setTaskEmployees(task.employees);
-      setProjectId(task.projectId);
-      setTaskStartDate(task.taskStartDate);
-      setTaskEndDate(task.taskEndDate);
-      setTaskName(task.taskName);
-      setTaskDescription(task.taskDescription);
-      setTaskStatus(task.taskStatus);
+      setTaskEmployees(taskData.employees);
+      setProjectId(taskData.projectId);
+      setTaskStartDate(taskData.taskStartDate);
+      setTaskEndDate(taskData.taskEndDate);
+      setTaskName(taskData.taskName);
+      setTaskDescription(taskData.taskDescription);
+      setTaskStatus(taskData.taskStatus);
     })();
   }, []);
 
@@ -71,7 +71,7 @@ const TaskDetail = () => {
     } else {
       // otherwise create the task and redirect
       const response = await updateTaskById(axioPrivate, id, {
-        employees: taskEmployees,
+        employees: tempArray.filter(emp => emp !== ""),
         taskName,
         taskDescription,
         taskStartDate,
@@ -97,10 +97,12 @@ const TaskDetail = () => {
     }
   };
 
+  const [tempArray, setTempArray] = useState([])
+
   return (
     <main className="pt-16 w-[100%]">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
-        Create New Task
+        Edit Task {taskName}
       </h1>
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
@@ -141,10 +143,8 @@ const TaskDetail = () => {
             name="taskEmployees"
             value={taskEmployees}
             onChange={(e) => {
-              setEmployees(() => {
-                Array.from(e.target.selectedOptions), (option) => option.value;
-              });
-            }}
+              console.log(tempArray)
+              setTempArray(Array.from(e.target.selectedOptions, (option) => option.value))}}
             id="taskEmployees"
             multiple
             className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"

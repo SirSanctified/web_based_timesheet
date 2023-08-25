@@ -5,12 +5,14 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const AddProject = () => {
   const [errors, setErrors] = useState({});
-  const [projectName, setProjectName] = useState("");
-  const [projectCode, setProjectCode] = useState("");
-  const [projectStartDate, setProjectStartDate] = useState(null);
-  const [projectEndDate, setProjectEndDate] = useState(null);
-  const [projectDescription, setProjectDescription] = useState("");
-  const [projectStatus, setProjectStatus] = useState("on hold");
+  const [project, setProject] = useState({
+    projectName: "",
+    projectCode: "",
+    projectDescription: "",
+    projectStartDate: null,
+    projectEndDate: null,
+    projectStatus: "on hold",
+  });
   const [formError, setFormError] = useState(false);
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
@@ -20,19 +22,19 @@ const AddProject = () => {
     const errors = {};
 
     // validate the fields
-    if (!projectName) {
+    if (!project.projectName) {
       errors.projectName = "Name is required for this project";
     }
 
-    if (!projectCode) {
+    if (!project.projectCode) {
       errors.projectCode = "The project code is required for this project";
     }
 
-    if (projectDescription && projectDescription.length < 15) {
+    if (project.projectDescription && project.projectDescription.length < 15) {
       errors.projectDescription = "The project description too short";
     }
 
-    if (!projectStartDate) {
+    if (!project.projectStartDate) {
       errors.projectStartDate = "The project start date is required";
     }
 
@@ -41,14 +43,7 @@ const AddProject = () => {
       setErrors(errors);
     } else {
       // otherwise create the project and redirect
-      const response = await insertProject(axioPrivate, {
-        projectName,
-        projectCode,
-        projectDescription,
-        projectStartDate,
-        projectEndDate,
-        projectStatus,
-      });
+      const response = await insertProject(axioPrivate, { ...project });
       if (response) {
         errors.form = "Something went wrong, please try again";
         setErrors(errors);
@@ -78,9 +73,11 @@ const AddProject = () => {
             type="text"
             id="projectName"
             name="projectName"
-            value={projectName}
+            value={project.projectName}
             placeholder="Project Name"
-            onChange={(e) => setProjectName(e.target.value)}
+            onChange={(e) =>
+              setProject((prev) => ({ ...prev, projectName: e.target.value }))
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.projectName && (
@@ -95,9 +92,11 @@ const AddProject = () => {
             type="text"
             id="projectCode"
             name="projectCode"
-            value={projectCode}
+            value={project.projectCode}
             placeholder="Project Code"
-            onChange={(e) => setProjectCode(e.target.value)}
+            onChange={(e) =>
+              setProject((prev) => ({ ...prev, projectCode: e.target.value }))
+            }
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.projectCode && (
@@ -111,8 +110,13 @@ const AddProject = () => {
           <textarea
             id="projectDescription"
             name="projectDescription"
-            value={projectDescription}
-            onChange={(e) => setProjectDescription(e.target.value)}
+            value={project.projectDescription}
+            onChange={(e) =>
+              setProject((prev) => ({
+                ...prev,
+                projectDescription: e.target.value,
+              }))
+            }
             placeholder="Project Description"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -128,8 +132,13 @@ const AddProject = () => {
             type="date"
             id="projectStartDate"
             name="projectStartDate"
-            value={projectStartDate}
-            onChange={(e) => setProjectStartDate(e.target.value)}
+            value={project.projectStartDate}
+            onChange={(e) =>
+              setProject((prev) => ({
+                ...prev,
+                projectStartDate: e.target.value,
+              }))
+            }
             placeholder="project projectStartDate"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -145,8 +154,13 @@ const AddProject = () => {
             type="date"
             id="projectEndDate"
             name="projectEndDate"
-            value={projectEndDate}
-            onChange={(e) => setProjectEndDate(e.target.value)}
+            value={project.projectEndDate}
+            onChange={(e) =>
+              setProject((prev) => ({
+                ...prev,
+                projectEndDate: e.target.value,
+              }))
+            }
             placeholder="project projectEndDate"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -158,15 +172,21 @@ const AddProject = () => {
           <label htmlFor="projectStatus" className="text-[18px] mb-1">
             Project Status:
           </label>
-          <input
-            type="text"
+          <select
             id="projectStatus"
             name="projectStatus"
-            value={projectStatus}
-            onChange={(e) => setProjectStatus(e.target.value)}
+            value={project.projectStatus}
+            onChange={(e) =>
+              setProject((prev) => ({ ...prev, projectStatus: e.target.value }))
+            }
             placeholder="project projectStatus"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
-          />
+          >
+            <option value="on hold">On Hold</option>
+            <option value="in progress">In Progress</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="completed">Completed</option>
+          </select>
           {errors?.projectStatus && (
             <span className="text-red-500">{errors.projectStatus}</span>
           )}

@@ -5,12 +5,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const ProjectDetail = () => {
   const [errors, setErrors] = useState({});
-  const [projectName, setProjectName] = useState("");
-  const [projectCode, setProjectCode] = useState("");
-  const [projectStartDate, setProjectStartDate] = useState(null);
-  const [projectEndDate, setProjectEndDate] = useState(null);
-  const [projectDescription, setProjectDescription] = useState("");
-  const [projectStatus, setProjectStatus] = useState("on hold");
+  const [project, setProject] = useState({});
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -18,15 +13,10 @@ const ProjectDetail = () => {
   useEffect(() => {
     async function getProject() {
       const response = await getProjectById(axioPrivate, id);
-      if (response.error) {
-        setErrors((prev) => (prev.form = response.error));
+      if (response?.error) {
+        setErrors((prev) => prev = {...prev, form: response.error });
       } else {
-        setProjectName(response.projectName);
-      setProjectCode(response.projectCode);
-      setProjectDescription(response.projectDescription);
-      setProjectStartDate(response.projectStartDate);
-      setProjectEndDate(response.projectEndDate);
-      setProjectStatus(response.projectStatus);
+        setProject(response);
       }
     }
     getProject();
@@ -37,19 +27,19 @@ const ProjectDetail = () => {
     const errors = {};
 
     // validate the fields
-    if (!projectName) {
+    if (!project.projectName) {
       errors.projectName = "Name is required for this project";
     }
 
-    if (!projectCode) {
+    if (!project.projectCode) {
       errors.projectCode = "The project code is required for this project";
     }
 
-    if (projectDescription && projectDescription.length < 15) {
+    if (project.projectDescription && project.projectDescription.length < 15) {
       errors.projectDescription = "The project description too short";
     }
 
-    if (!projectStartDate) {
+    if (!project.projectStartDate) {
       errors.projectStartdate = "The project start date is required";
     }
 
@@ -59,15 +49,15 @@ const ProjectDetail = () => {
     }
     // otherwise create the project and redirect
     const response = await updateProjectById(axioPrivate, id, {
-      projectName,
-      projectCode,
-      projectDescription,
-      projectStartDate,
-      projectEndDate,
-      projectStatus,
+      projectName: project.projectName,
+      projectCode: project.projectCode,
+      projectDescription: project.projectDescription,
+      projectStartDate: project.projectStartDate,
+      projectEndDate: project.projectEndDate,
+      projectStatus: project.projectStatus,
     });
     if (response?.error) {
-      errors.form = "Something went wrong, please try again";
+      setErrors(prev => prev ={...prev, form: "Something went wrong, please try again"});
     } else {
       navigate(-1);
     }
@@ -82,6 +72,7 @@ const ProjectDetail = () => {
       console.log(error);
     }
   };
+  console.log(project);
   return (
     <main className=" w-[100%] pt-16">
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
@@ -96,9 +87,9 @@ const ProjectDetail = () => {
             type="text"
             id="projectName"
             name="projectName"
-            value={projectName}
+            value={project.projectName}
             placeholder="Project Name"
-            onChange={(e) => setProjectName(e.target.value)}
+            onChange={(e) => setProject(prev => prev = {...prev, projectName: e.target.value })}
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.projectName && (
@@ -113,9 +104,9 @@ const ProjectDetail = () => {
             type="text"
             id="projectCode"
             name="projectCode"
-            value={projectCode}
+            value={project.projectCode}
             placeholder="Project Code"
-            onChange={(e) => setProjectCode(e.target.value)}
+            onChange={(e) => setProject(prev => prev = {...prev, projectCode: e.target.value })}
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
           {errors?.projectCode && (
@@ -129,8 +120,8 @@ const ProjectDetail = () => {
           <textarea
             id="projectDescription"
             name="projectDescription"
-            value={projectDescription}
-            onChange={(e) => setProjectDescription(e.target.value)}
+            value={project.projectDescription}
+            onChange={(e) => setProject(prev => prev = {...prev, projectDescription: e.target.value })}
             placeholder="Project Description"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -146,8 +137,8 @@ const ProjectDetail = () => {
             type="date"
             id="projectStartDate"
             name="projectStartDate"
-            value={projectStartDate}
-            onChange={(e) => setProjectStartDate(e.target.value)}
+            value={project.projectStartDate}
+            onChange={(e) => setProject(prev => prev = {...prev, projectStartDate: e.target.value })}
             placeholder="project projectStartDate"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -163,8 +154,8 @@ const ProjectDetail = () => {
             type="date"
             id="projectEndDate"
             name="projectEndDate"
-            value={projectEndDate}
-            onChange={(e) => setProjectEndDate(e.target.value)}
+            value={project.projectEndDate}
+            onChange={(e) => setProject(prev => prev = {...prev, projectEndDate: e.target.value })}
             placeholder="project projectEndDate"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -180,8 +171,8 @@ const ProjectDetail = () => {
             type="text"
             id="projectStatus"
             name="projectStatus"
-            value={projectStatus}
-            onChange={(e) => setProjectStatus(e.target.value)}
+            value={project.projectStatus}
+            onChange={(e) => setProject(prev => prev = {...prev, projectStatus: e.target.value })}
             placeholder="project projectStatus"
             className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
@@ -205,6 +196,31 @@ const ProjectDetail = () => {
             </button>
           </div>
       </form>
+      {project?.Tasks?.length > 0 && (
+        <section className="mt-4 w-full md:w-1/2 pr-4 mx-auto">
+          <h1 className="py-4 text-center text-blue-950 text-xl font-semibold">
+            Tasks Assigned
+          </h1>
+          <table className="w-[100%]">
+            <thead>
+              <tr className="border border-gray-500">
+                <td className=" py-1 px-2 font-semibold">Name</td>
+                <td className=" py-1 px-2 font-semibold">Start Date</td>
+                <td className=" py-1 px-2 font-semibold">Status</td>
+              </tr>
+            </thead>
+            <tbody>
+              {project.Tasks.map((task) => (
+                <tr key={task.id} className="border border-gray-500">
+                  <td className=" py-1 px-2">{task.taskName}</td>
+                  <td className=" py-1 px-2">{task.taskStartDate}</td>
+                  <td className=" py-1 px-2">{task.taskStatus}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
     </main>
   );
 };

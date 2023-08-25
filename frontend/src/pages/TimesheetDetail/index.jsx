@@ -2,22 +2,15 @@ import { useEffect, useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import {
   deleteTimesheetById,
-  getAllEmployees,
   getTimesheetById,
-  getTimesheetEntries,
   updateTimesheetById,
 } from "../../api";
 import { useNavigate, useParams } from "react-router-dom";
 
 const TimesheetDetail = () => {
   const [timesheet, setTimesheet] = useState();
-  const [timesheetEntries, setTimesheetEntries] = useState([]);
-  const [date, setDate] = useState("");
-  const [hours, setHours] = useState("");
-  const [employeeId, setEmployeeId] = useState("");
   const [error, setError] = useState("");
   const [updated, setUpdated] = useState(false);
-  const [employees, setEmployees] = useState([]);
   const axioPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const { id } = useParams();
@@ -25,34 +18,24 @@ const TimesheetDetail = () => {
   useEffect(() => {
     (async () => {
       const receivedTimesheet = await getTimesheetById(axioPrivate, id);
-      const allEmployees = await getAllEmployees(axioPrivate);
-      const entries = await getTimesheetEntries(axioPrivate, id);
       if (receivedTimesheet.error) {
         setError(receivedTimesheet.error);
       } else {
         setTimesheet(receivedTimesheet);
-        setDate(receivedTimesheet.date);
-        setHours(receivedTimesheet.hours);
-        setEmployeeId(receivedTimesheet.employeeId);
       }
-      allEmployees?.error
-        ? setError(allEmployees.error)
-        : setEmployees(allEmployees);
-      entries?.error ? setError(entries.error) : setTimesheetEntries(entries);
     })();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedTimesheet = await updateTimesheetById(axioPrivate, id, {
-      date,
-      hours,
-      employeeId,
+      date: timesheet.date,
+      hours: timesheet.hours,
+      employeeId: timesheet.employeeId,
     });
     if (updatedTimesheet?.error) {
       setUpdated(false);
     } else {
-      setTimesheet({ date, hours, employeeId });
       setUpdated(true);
       setTimeout(() => navigate(-1), 2000);
     }
@@ -68,14 +51,16 @@ const TimesheetDetail = () => {
     }
   };
 
+  console.log(timesheet);
+
   return (
     <main className="mt-16 w-[100%]">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
-        Edit Timesheet
+        Edit {timesheet?.Employee?.firstName}&#39;s Timesheet
       </h1>
       {error ? (
         <p className="text-red-500 text-center">{error}</p>
-      ) : (
+      ) : timesheet && (
         <form onSubmit={handleSubmit} className="w-100 md:w-1/2 mx-auto">
           {updated && setTimeout(() => setUpdated(false), 1000) && (
             <p className="text-white bg-green-500 px-4 py-2 rounded z-20 text-center absolute top-[15%] right-[5%]">
@@ -87,17 +72,13 @@ const TimesheetDetail = () => {
             <select
               name="employeeId"
               id="employeeId"
-              value={employeeId}
-              onChange={(e) => setEmployeeId(e.target.value)}
+              value={timesheet.employeeId}
+              onChange={() => {}}
               className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
             >
-              <option value="">Select an employee</option>
-              {employees &&
-                employees.map((employee) => (
-                  <option key={employee.id} value={employee.id}>
-                    {employee.firstName} {employee.lastName}
+                  <option value={timesheet.employeeId}>
+                    {timesheet?.Employee?.firstName} {timesheet?.Employee?.lastName}
                   </option>
-                ))}
             </select>
           </div>
           <div className="flex flex-col items-start w-[100%]">
@@ -110,8 +91,8 @@ const TimesheetDetail = () => {
               type="date"
               name="date"
               id="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
+              value={timesheet.date}
+              onChange={(e) => setTimesheet(prev => prev = {...prev, date: e.target.value})}
               className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
             />
           </div>
@@ -125,8 +106,8 @@ const TimesheetDetail = () => {
               type="number"
               name="hours"
               id="hours"
-              value={hours}
-              onChange={(e) => setHours(e.target.value)}
+              value={timesheet.hours}
+              onChange={(e) => setTimesheet(prev => prev = {...prev, hours: parseInt(e.target.value)})}
               className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
             />
           </div>
@@ -147,20 +128,32 @@ const TimesheetDetail = () => {
           </div>
         </form>
       )}
-      {timesheetEntries && <h1 className="text-blue-950 text-2xl font-bold mt-8 w-fit mx-auto">Timesheet Entries</h1>}
-       {timesheetEntries && timesheetEntries.map((timesheetEntry, index) => (          
-            <div
-              key={timesheetEntry.id}
-              className="flex flex-col items-center mt-4 list-none w-[100%] md:w-[50%] md:mx-auto"
-            >
-              <div className="flex border gap-2 px-4 py-2 border-gray-500 w-[100%]">
-                <p className="text-blue-950 font-normal text-xl">{index + 1}. On {timesheetEntry.date}</p>
-                <p className="text-blue-950 font-normal text-xl">
-                  for {timesheetEntry.hours}
-                </p>
-              </div>
-            </div>
-          ))}
+      {timesheet?.Entries?.length > 0  &&  <section className="mt-4 w-full md:w-1/2 pr-4 mx-auto">
+          <h1 className="py-4 text-center text-blue-950 text-xl font-semibold">
+            Timesheet Entries 
+          </h1>
+          <table className="w-[100%]">
+            <thead>
+              <tr className="border border-gray-500">
+                <td className=" py-1 px-2 font-semibold">Date</td>
+                <td className=" py-1 px-2 font-semibold">Hours</td>
+                <td className=" py-1 px-2 font-semibold">Task</td>
+                <td className=" py-1 px-2 font-semibold">Project</td>
+              </tr>
+            </thead>
+            <tbody>
+              {timesheet.Entries.map((entry) => (
+                <tr key={entry.id} className="border border-gray-500">
+                  <td className=" py-1 px-2">{entry.date}</td>
+                  <td className=" py-1 px-2">{entry.hours}</td>
+                  <td className=" py-1 px-2">{entry?.Task?.taskName}</td>
+                  <td className=" py-1 px-2">{entry?.Project?.projectName}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+          }
     </main>
   );
 };
