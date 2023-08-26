@@ -85,6 +85,9 @@ const Login = () => {
         {errors?.password && (
           <span className="text-red-500">{errors.password}</span>
         )}
+        <Link to={'/forgot-password'} className="mt-4 mx-auto text-blue-700 hover:underline">
+          Forgot password?
+        </Link>
         <button className="bg-blue-700 text-white py-2 px-4 rounded-sm hover:bg-blue-900 transition duration-150 ease-in-out min-w-full md:min-w-[100px] mt-4">
           Login
         </button>

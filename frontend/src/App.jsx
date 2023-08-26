@@ -30,6 +30,7 @@ import RequestRegistration from "./pages/RequestRegistration";
 import RegistrationRequests from "./pages/RegistrationRequests";
 import RequestDetail from "./pages/RequestDetail";
 import Dashboard from "./components/Dashboard";
+import ForgotPassword, {action as resetAction } from "./pages/ForgotPassword";
 
 export default function App() {
   const router = createBrowserRouter(
@@ -38,6 +39,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="forgot-password" element={<ForgotPassword />}  action={resetAction}/>
         <Route path="request-registration" element={<RequestRegistration />} />
         <Route element={<PersistLogin />}>
           <Route

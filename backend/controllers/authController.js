@@ -18,7 +18,7 @@ export const login = async (req, res) => {
     });
 
     if (!existingEmployee)
-      return res.status(404).json({ message: "Employee doesn't exist." });
+      return res.status(404).json({ error: "Employee doesn't exist." });
 
     const isPasswordCorrect = await bcrypt.compare(
       password,
@@ -26,7 +26,7 @@ export const login = async (req, res) => {
     );
 
     if (!isPasswordCorrect)
-      return res.status(401).json({ message: "Invalid credentials." });
+      return res.status(401).json({ error: "Invalid credentials." });
 
     const accessToken = jwt.sign(
       {
@@ -80,7 +80,7 @@ export const login = async (req, res) => {
       token: accessToken,
     });
   } catch (error) {
-    res.status(401).json({ message: error.message || "Invalid credentials" });
+    res.status(401).json({ error: error.message || "Invalid credentials" });
   }
 };
 
@@ -124,16 +124,15 @@ export const forgotPassword = async (req, res) => {
 
   try {
     const existingEmployee = await Employee.findOne({ where: { email } });
-
     if (!existingEmployee)
-      return res.status(404).json({ message: "Employee doesn't exist." });
+      return res.status(404).json({ error: "Employee doesn't exist." });
 
     // send email with reset link with node mailer.
     // the link should contain the employee id and a token, expiring in 30 minutes
 
     const resetToken = jwt.sign(
       { email: existingEmployee.email, id: existingEmployee.id },
-      process.env.RESET_TOKEN_SECRET,
+      process.env.RESET_PASSWORD_SECRET,
       { expiresIn: "30m" }
     );
 
@@ -153,14 +152,14 @@ export const forgotPassword = async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        throw new Error(error);
       } else {
         console.log("Email sent: " + info.response);
       }
     });
     res.status(200).json({ message: "Email sent successfully." });
   } catch (error) {
-    res.status(401).json({ message: "Invalid credentials" });
+    console.log(error);
+    res.status(401).json({ error: "Invalid credentials" });
   }
 };
 
@@ -176,9 +175,9 @@ export const resetPassword = async (req, res) => {
     const existingEmployee = await Employee.findByPk(id);
 
     if (!existingEmployee)
-      return res.status(404).json({ message: "Employee doesn't exist." });
+      return res.status(404).json({ error: "Employee doesn't exist." });
 
-    if (!foundToken) return res.status(401).json({ message: "Invalid token." });
+    if (!foundToken) return res.status(401).json({ error: "Invalid token." });
 
     // if received token hasn't expired and is similar to the one in the database, update the password
 
@@ -210,7 +209,7 @@ export const resetPassword = async (req, res) => {
       throw new Error("Invalid token.");
     }
   } catch (error) {
-    res.status(401).json({ message: "Invalid credentials" });
+    res.status(401).json({ error: "Invalid credentials" });
   }
 };
 
@@ -225,7 +224,7 @@ export const register = async (req, res) => {
     if (req.user.role !== "admin") {
       return res
         .status(401)
-        .json({ message: "You are not authorized to register new employees." });
+        .json({ error: "You are not authorized to register new employees." });
     }
 
     // hash the password
@@ -264,6 +263,6 @@ export const register = async (req, res) => {
 
     res.status(201).json(result);
   } catch (err) {
-    res.status(500).json({ message: err.message || "Something went wrong." });
+    res.status(500).json({ error: err.message || "Something went wrong." });
   }
 };

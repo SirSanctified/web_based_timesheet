@@ -20,7 +20,7 @@ export const axioPrivate = axios.create({
 
 export const loginUser = async (payload) => {
   try {
-    const response = await api.post(`/login`, payload);
+    const response = await axioPrivate.post(`/login`, payload);
     return response.data;
   } catch (err) {
     if (err.response) {
@@ -35,6 +35,20 @@ export const logoutUser = async (axiosInstance, id) => {
     await axiosInstance.post(`/logout/${id}`);
   } catch (err) {
     return { error: err.message };
+  }
+};
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await axioPrivate.post("/forgot-password", { email });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return {
+      error:
+        error?.response?.data?.error ||
+        "No user with the provided email address was found.",
+    };
   }
 };
 
