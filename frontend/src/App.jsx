@@ -30,7 +30,12 @@ import RequestRegistration from "./pages/RequestRegistration";
 import RegistrationRequests from "./pages/RegistrationRequests";
 import RequestDetail from "./pages/RequestDetail";
 import Dashboard from "./components/Dashboard";
-import ForgotPassword, {action as resetAction } from "./pages/ForgotPassword";
+import ForgotPassword, {
+  action as forgotPasswordAction,
+} from "./pages/ForgotPassword";
+import ResetPassword, {
+  action as resetPasswordAction,
+} from "./pages/ResetPassword";
 
 export default function App() {
   const router = createBrowserRouter(
@@ -39,7 +44,16 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="unauthorized" element={<Unauthorized />} />
-        <Route path="forgot-password" element={<ForgotPassword />}  action={resetAction}/>
+        <Route
+          path="forgot-password"
+          element={<ForgotPassword />}
+          action={forgotPasswordAction}
+        />
+        <Route
+          path="reset-password/:token/:id"
+          element={<ResetPassword />}
+          action={resetPasswordAction}
+        />
         <Route path="request-registration" element={<RequestRegistration />} />
         <Route element={<PersistLogin />}>
           <Route
@@ -56,7 +70,10 @@ export default function App() {
           </Route>
           <Route element={<RequireAuth allowedRoles={["admin", "approver"]} />}>
             <Route path="timesheets/all" element={<Timesheets />} />
-            <Route path="timesheets/approve/:id" element={<ApproveTimesheet />} />
+            <Route
+              path="timesheets/approve/:id"
+              element={<ApproveTimesheet />}
+            />
           </Route>
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
             <Route path="entries/all" element={<Entries />} />
@@ -68,7 +85,10 @@ export default function App() {
             <Route path="employees/all" element={<Employees />} />
             <Route path="register" element={<Register />} />
             <Route path="employees/:id" element={<EmployeeDetail />} />
-            <Route path="registration-requests/all" element={<RegistrationRequests />} />
+            <Route
+              path="registration-requests/all"
+              element={<RegistrationRequests />}
+            />
             <Route path="requests/:id" element={<RequestDetail />} />
           </Route>
         </Route>

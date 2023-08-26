@@ -141,8 +141,8 @@ export const forgotPassword = async (req, res) => {
       { where: { id: existingEmployee.id } }
     );
 
-    const actionUrl = `http://localhost:3000/reset-password/${existingEmployee.id}/${resetToken}`;
-
+    const actionUrl = `${process.env.CLIENT_ADDRESS}/reset-password/${resetToken}/${existingEmployee.id}`;
+    console.log(actionUrl);
     const mailOptions = {
       from: process.env.EMAIL_ADDRESS,
       to: existingEmployee.email,
@@ -170,8 +170,8 @@ export const resetPassword = async (req, res) => {
   try {
     // check if token has expired
 
-    const foundToken = jwt.verify(token, process.env.RESET_TOKEN_SECRET);
-
+    const foundToken = jwt.verify(token, process.env.RESET_PASSWORD_SECRET);
+    console.log("Found token", foundToken);
     const existingEmployee = await Employee.findByPk(id);
 
     if (!existingEmployee)
@@ -205,11 +205,15 @@ export const resetPassword = async (req, res) => {
       });
 
       res.status(200).json({ message: "Password updated successfully." });
-    } else {
-      throw new Error("Invalid token.");
     }
   } catch (error) {
-    res.status(401).json({ error: "Invalid credentials" });
+    console.log(error);
+    if (error instanceof jwt.TokenExpiredError)
+    {
+      res.status(401).json({ error: "The token you are using has expired, please request another one." });
+    } else {
+      res.status(500).json({ error: "An internal server error occurred"})
+    }
   }
 };
 

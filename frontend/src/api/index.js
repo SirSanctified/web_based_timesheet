@@ -52,6 +52,23 @@ export const forgotPassword = async (email) => {
   }
 };
 
+export const resetPassword = async (password, resetToken, id) => {
+  try {
+    const response = await axioPrivate.post(
+      `/reset-password/${resetToken}/${id}`,
+      { password }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return {
+      error:
+        error?.response?.data?.error ||
+        "An error occured when trying to reset your password.",
+    };
+  }
+};
+
 export const registerUser = async (axiosInstance, payload) => {
   try {
     await axiosInstance.post(`/register`, payload);
