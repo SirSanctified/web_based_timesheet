@@ -36,6 +36,7 @@ import ForgotPassword, {
 import ResetPassword, {
   action as resetPasswordAction,
 } from "./pages/ResetPassword";
+import Me from "./pages/Me";
 
 export default function App() {
   const router = createBrowserRouter(
@@ -67,6 +68,7 @@ export default function App() {
             <Route path="entries/add" element={<AddEntry />} />
             <Route path="entries/:id" element={<EntryDetail />} />
             <Route path="tasks/:id" element={<TaskDetail />} />
+            <Route path="employees/me" element={<Me />} />
           </Route>
           <Route element={<RequireAuth allowedRoles={["admin", "approver"]} />}>
             <Route path="timesheets/all" element={<Timesheets />} />

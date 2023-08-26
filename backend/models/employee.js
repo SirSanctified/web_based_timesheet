@@ -43,11 +43,11 @@ class Employee extends Model {
           allowNull: false,
         },
         refreshToken: {
-          type: DataTypes.STRING,
+          type: DataTypes.STRING(500),
           allowNull: true,
         },
         resetToken: {
-          type: DataTypes.STRING,
+          type: DataTypes.STRING(500),
           allowNull: true,
         },
         role: {

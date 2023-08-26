@@ -3,6 +3,10 @@ import { v4 as uuidv4 } from "uuid";
 import { sequelize } from "../config/db.js";
 
 export const createProject = async (req, res) => {
+  if (req.user.role !== "admin")
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to add projects." });
   try {
     const {
       projectName,
@@ -62,6 +66,10 @@ export const getProjectById = async (req, res) => {
 };
 
 export const updateProject = async (req, res) => {
+  if (req.user.role !== "admin")
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to edit this project." });
   try {
     const {
       projectName,
@@ -89,6 +97,10 @@ export const updateProject = async (req, res) => {
 };
 
 export const deleteProject = async (req, res) => {
+  if (req.user.role !== "admin")
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to delete this project." });
   try {
     await Project.destroy({ where: { id: req.params.id } });
     res.status(200).json({ message: "Project deleted successfully" });

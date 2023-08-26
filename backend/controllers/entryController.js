@@ -30,23 +30,48 @@ export const createEntry = async (req, res) => {
 
 export async function getEntries(req, res) {
   try {
-    const entries = await Entry.findAll({
-      include: [
-        {
-          model: Project,
-        },
-        {
-          model: Task,
-        },
-        {
-          model: Timesheet,
-          include: {
-            model: Employee,
-            attributes: { exclude: ["password", "refreshToken", "resetToken"] },
+    if (req.user.role === "admin" || req.user.role === "approver") {
+      const entries = await Entry.findAll({
+        include: [
+          {
+            model: Project,
           },
-        },
-      ],
-    });
+          {
+            model: Task,
+          },
+          {
+            model: Timesheet,
+            include: {
+              model: Employee,
+              attributes: {
+                exclude: ["password", "refreshToken", "resetToken"],
+              },
+            },
+          },
+        ],
+      });
+    } else {
+      const entries = await Entry.findAll({
+        include: [
+          {
+            model: Project,
+          },
+          {
+            model: Task,
+          },
+          {
+            model: Timesheet,
+            where: { employeeId: req.user.id },
+            include: {
+              model: Employee,
+              attributes: {
+                exclude: ["password", "refreshToken", "resetToken"],
+              },
+            },
+          },
+        ],
+      });
+    }
     res.status(200).json(entries);
   } catch (err) {
     res
@@ -75,6 +100,15 @@ export async function getEntryById(req, res) {
         },
       ],
     });
+    if (
+      req.user.role !== "admin" ||
+      req.user.role !== "approver" ||
+      req.user.id !== entry.Timesheet.employeeId
+    ) {
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to view this timesheet." });
+    }
     res.status(200).json(entry);
   } catch (err) {
     res
@@ -87,6 +121,15 @@ export async function updateEntry(req, res) {
   const { id } = req.params;
   const { hours, date, timesheetId, taskId, projectId } = req.body;
   try {
+    const entry = await Entry.findByPk(id, {
+      include: {
+        model: Timesheet,
+      },
+    });
+    if (req.user.role !== "admin" || req.user.id !== entry.Timesheet.employeeId)
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to edit this timesheet." });
     const updatedEntry = await Entry.update(
       { hours, date, timesheetId, taskId, projectId },
       { where: { id } }
@@ -102,6 +145,15 @@ export async function updateEntry(req, res) {
 export async function deleteEntry(req, res) {
   const { id } = req.params;
   try {
+    const entry = await Entry.findByPk(id, {
+      include: {
+        model: Timesheet,
+      },
+    });
+    if (req.user.role !== "admin" || req.user.id !== entry.Timesheet.employeeId)
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to delete this timesheet." });
     await Entry.destroy({ where: { id } });
     res.status(204);
   } catch (err) {
@@ -113,6 +165,10 @@ export async function deleteEntry(req, res) {
 
 export async function deleteAllEntries(req, res) {
   try {
+    if (req.user.role !== "admin")
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to delete these timesheets." });
     await Entry.destroy({ where: {} });
     return res.status(204);
   } catch (err) {

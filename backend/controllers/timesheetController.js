@@ -7,6 +7,7 @@ import {
   Project,
 } from "../models/association.js";
 import { sequelize } from "../config/db.js";
+import { where } from "sequelize";
 
 // Create and Save a new Timesheet
 export const createTimesheet = async (req, res) => {
@@ -36,12 +37,22 @@ export const createTimesheet = async (req, res) => {
 // Retrieve all Timesheets from the database.
 export const getTimesheets = async (req, res) => {
   try {
-    const data = await Timesheet.findAll({
-      include: {
-        model: Employee,
-        attributes: { exclude: ["password", "resetToken", "refreshToken"] },
-      },
-    });
+    if (req.user.role === "admin" || req.user.role === "approver") {
+      const data = await Timesheet.findAll({
+        include: {
+          model: Employee,
+          attributes: { exclude: ["password", "resetToken", "refreshToken"] },
+        },
+      });
+    } else {
+      const data = await Timesheet.findAll({
+        where: { employeeId: req.user.id },
+        include: {
+          model: Employee,
+          attributes: { exclude: ["password", "resetToken", "refreshToken"] },
+        },
+      });
+    }
     res.status(200).json(data);
   } catch (err) {
     res.status(500).json({
@@ -54,16 +65,27 @@ export const getTimesheets = async (req, res) => {
 // Find a single Timesheet with an id
 export const getTimesheetById = async (req, res) => {
   const id = req.params.id;
-
   try {
-    const data = await Timesheet.findByPk(id, {
-      include: [
-        {
-          model: Employee,
-          attributes: { exclude: ["password", "resetToken", "refreshToken"] },
-        },
-      ],
-    });
+    if (req.user.role === "admin" || req.user.role === "approver") {
+      const data = await Timesheet.findByPk(id, {
+        include: [
+          {
+            model: Employee,
+            attributes: { exclude: ["password", "resetToken", "refreshToken"] },
+          },
+        ],
+      });
+    } else {
+      const data = await Timesheet.findByPk(id, {
+        where: { employeeId: req.user.id },
+        include: [
+          {
+            model: Employee,
+            attributes: { exclude: ["password", "resetToken", "refreshToken"] },
+          },
+        ],
+      });
+    }
     const Entries = await Entry.findAll({
       where: { timesheetId: data.id },
       include: [
@@ -88,12 +110,14 @@ export const updateTimesheet = async (req, res) => {
   const { date, hours, employeeId } = req.body;
 
   try {
-    await Timesheet.update(
-      { date, hours, employeeId },
-      {
-        where: { id: id },
-      }
-    );
+    const timesheet = await Timesheet.findByPk(id);
+    if (req.user.role === "admin" || req.user.id === timesheet.employeeId) {
+      await Timesheet.update({ date, hours, employeeId }, { where: { id } });
+    } else {
+      res
+        .status(403)
+        .json({ error: "You are not allowed to edit this timesheet." });
+    }
     res.status(200).json({
       message: "Timesheet was updated successfully.",
     });
@@ -109,10 +133,16 @@ export const deleteTimesheet = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const data = Timesheet.findByPk(id);
-    await Timesheet.destroy({
-      where: { id: id },
-    });
+    const timesheet = Timesheet.findByPk(id);
+    if (req.user.role === "admin" || req.user.id === timesheet.employeeId) {
+      await Timesheet.destroy({
+        where: { id: id },
+      });
+    } else {
+      res
+        .status(403)
+        .json({ error: "You are not allowed to edit this timesheet." });
+    }
     res.status(200).json({
       message: "Timesheet was deleted successfully!",
     });
@@ -144,6 +174,11 @@ export const deleteAllTimesheets = async (req, res) => {
 export const approveTimesheet = async (req, res) => {
   const { status } = req.body;
   try {
+    if (req.user.role !== "admin" || req.user.role !== "approver") {
+      res
+        .status(403)
+        .json({ error: "You are not allowed to edit this timesheet." });
+    }
     const timesheet = await Timesheet.findByPk(req.params.id);
 
     if (timesheet.employeeId === req.user.id)

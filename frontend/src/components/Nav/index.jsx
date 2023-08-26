@@ -89,6 +89,7 @@ const Nav = () => {
                 Timesheets
               </Link>
             </li>
+            {auth?.user.role === "admin" && (
             <li className="text-blue-950 font-bold text-lg hover:text-white transition-all flex items-start gap-2">
               <Link
                 to={"/projects/all"}
@@ -100,6 +101,7 @@ const Nav = () => {
                 Projects
               </Link>
             </li>
+            )}
             <li className="text-blue-950 font-bold text-lg hover:text-white transition-all flex items-start gap-2">
               <Link
                 to={"/tasks/all"}

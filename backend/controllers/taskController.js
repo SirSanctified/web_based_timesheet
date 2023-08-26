@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 import { sequelize } from "../config/db.js";
 
 export const createTask = async (req, res) => {
+  if (req.user.role !== "admin")
+    return res.status(403).json({ error: "You are not allowed to add tasks." });
   try {
     const {
       taskName,
@@ -59,12 +61,16 @@ export const getTaskById = async (req, res) => {
     });
     res.status(200).json(task);
   } catch (error) {
-    lo
+    lo;
     res.status(404).json({ message: error.message });
   }
 };
 
 export const updateTask = async (req, res) => {
+  if (req.user.role !== "admin")
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to edit this task." });
   try {
     const {
       taskName,
@@ -97,6 +103,10 @@ export const updateTask = async (req, res) => {
 };
 
 export const deleteTask = async (req, res) => {
+  if (req.user.role !== "admin")
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to delete this task." });
   try {
     await Task.destroy({ where: { id: req.params.id } });
     res.status(200).json({ message: "Task deleted successfully" });

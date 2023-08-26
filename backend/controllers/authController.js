@@ -7,6 +7,30 @@ import { Employee } from "../models/association.js";
 
 dotenv.config();
 
+const generateTokens = async (employee) => {
+  const accessToken = jwt.sign(
+    {
+      email: employee.email,
+      id: employee.id,
+      role: employee.role,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "10m" }
+  );
+
+  const refreshToken = jwt.sign(
+    {
+      email: employee.email,
+      id: employee.id,
+      role: employee.role,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "1d" }
+  );
+
+  return { accessToken, refreshToken };
+};
+
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -16,7 +40,6 @@ export const login = async (req, res) => {
       raw: true,
       attributes: { exclude: ["refreshToken", "resetToken"] },
     });
-
     if (!existingEmployee)
       return res.status(404).json({ error: "Employee doesn't exist." });
 
@@ -28,24 +51,8 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect)
       return res.status(401).json({ error: "Invalid credentials." });
 
-    const accessToken = jwt.sign(
-      {
-        email: existingEmployee.email,
-        id: existingEmployee.id,
-        role: existingEmployee.role,
-      },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "10m" }
-    );
-
-    const refreshToken = jwt.sign(
-      {
-        email: existingEmployee.email,
-        id: existingEmployee.id,
-        role: existingEmployee.role,
-      },
-      process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d" }
+    const { accessToken, refreshToken } = await generateTokens(
+      existingEmployee
     );
     await Employee.update(
       { refreshToken },
@@ -208,11 +215,15 @@ export const resetPassword = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    if (error instanceof jwt.TokenExpiredError)
-    {
-      res.status(401).json({ error: "The token you are using has expired, please request another one." });
+    if (error instanceof jwt.TokenExpiredError) {
+      res
+        .status(401)
+        .json({
+          error:
+            "The token you are using has expired, please request another one.",
+        });
     } else {
-      res.status(500).json({ error: "An internal server error occurred"})
+      res.status(500).json({ error: "An internal server error occurred" });
     }
   }
 };
