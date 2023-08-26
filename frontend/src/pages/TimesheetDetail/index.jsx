@@ -51,8 +51,6 @@ const TimesheetDetail = () => {
     }
   };
 
-  console.log(timesheet);
-
   return (
     <main className="mt-16 w-[100%]">
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">

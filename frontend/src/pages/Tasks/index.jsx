@@ -47,12 +47,14 @@ const Tasks = () => {
       {error ? (
         <p className="text-red-500 text-center">{error}</p>
       ) : isLoading ? (
-        <ClipLoader
-          color="#2563EB"
-          loading={isLoading}
-          size={150}
-          css="display: block; margin: 0 auto;"
-        />
+        <p className="flex items-center justify-center w-screen h-screen">
+          <ClipLoader
+            color="#2563EB"
+            loading={isLoading}
+            size={150}
+            css="display: block; margin: auto;"
+          />
+        </p>
       ) : (
         <div className="w-fit mx-auto max-w-[100vw] overflow-scroll">
           <Link
@@ -102,17 +104,16 @@ const Tasks = () => {
                         </td>
                         <td className="border border-gray-500 p-4 align-middle">
                           {
-                            projects.find(project => project.id === task.projectId)
-                              ?.projectName
+                            projects.find(
+                              (project) => project.id === task.projectId
+                            )?.projectName
                           }
                         </td>
                         <td className="border border-gray-500 p-4 align-middle">
                           {task.taskStartDate}
                         </td>
                         <td className="border border-gray-500 p-4 align-middle">
-                          {task.taskEndDate
-                            ? task.taskEndDate
-                            : "Unspecified"}
+                          {task.taskEndDate ? task.taskEndDate : "Unspecified"}
                         </td>
                         <td className="border border-gray-500 p-4 align-middle">
                           {task.taskStatus}

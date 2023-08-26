@@ -119,7 +119,7 @@ const AddTimesheet = () => {
             onChange={(e) =>
               setTimesheet((prev) => ({
                 ...prev,
-                hours: parent(e.target.value),
+                hours: parseInt(e.target.value),
               }))
             }
             placeholder="Timesheet hours"

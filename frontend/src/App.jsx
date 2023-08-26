@@ -69,20 +69,20 @@ export default function App() {
             <Route path="entries/:id" element={<EntryDetail />} />
             <Route path="tasks/:id" element={<TaskDetail />} />
             <Route path="employees/me" element={<Me />} />
+            <Route path="timesheets/all" element={<Timesheets />} />
+            <Route path="entries/all" element={<Entries />} />
+            <Route path="tasks/all" element={<Tasks />} />
           </Route>
           <Route element={<RequireAuth allowedRoles={["admin", "approver"]} />}>
-            <Route path="timesheets/all" element={<Timesheets />} />
             <Route
               path="timesheets/approve/:id"
               element={<ApproveTimesheet />}
             />
           </Route>
           <Route element={<RequireAuth allowedRoles={["admin"]} />}>
-            <Route path="entries/all" element={<Entries />} />
             <Route path="projects/all" element={<Projects />} />
-            <Route path="projects/add" element={<AddProject />} />
             <Route path="projects/:id" element={<ProjectDetail />} />
-            <Route path="tasks/all" element={<Tasks />} />
+            <Route path="projects/add" element={<AddProject />} />
             <Route path="tasks/add" element={<AddTask />} />
             <Route path="employees/all" element={<Employees />} />
             <Route path="register" element={<Register />} />

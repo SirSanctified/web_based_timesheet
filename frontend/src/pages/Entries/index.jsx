@@ -5,13 +5,12 @@ import { Link } from "react-router-dom";
 
 const Entries = () => {
   const [entries, setEntries] = useState([]);
-  const [error, setError] = useState("");
   const axioPrivate = useAxiosPrivate();
 
   useEffect(() => {
     (async () => {
       const allEntries = await getAllEntries(axioPrivate);
-      allEntries?.error ? setError(allEntries.error) : setEntries(allEntries);
+      !allEntries?.error && setEntries(allEntries);
     })();
   }, []);
 
@@ -29,9 +28,6 @@ const Entries = () => {
       <h1 className="text-blue-950 text-2xl font-black text-center mb-4">
         Available Entries
       </h1>
-      {error ? (
-        <p className="text-red-500 text-center">{error}</p>
-      ) : (
         <div className="w-fit mx-auto max-w-[100vw] overflow-scroll no-scrollbar">
           <Link
             to="/entries/add"
@@ -126,7 +122,6 @@ const Entries = () => {
             </p>
           )}
         </div>
-      )}
     </main>
   );
 };

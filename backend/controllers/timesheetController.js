@@ -44,6 +44,7 @@ export const getTimesheets = async (req, res) => {
           attributes: { exclude: ["password", "resetToken", "refreshToken"] },
         },
       });
+      res.status(200).json(data);
     } else {
       const data = await Timesheet.findAll({
         where: { employeeId: req.user.id },
@@ -52,9 +53,10 @@ export const getTimesheets = async (req, res) => {
           attributes: { exclude: ["password", "resetToken", "refreshToken"] },
         },
       });
+      res.status(200).json(data);
     }
-    res.status(200).json(data);
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       message:
         err.message || "Some error occurred while retrieving timesheets.",
@@ -75,6 +77,16 @@ export const getTimesheetById = async (req, res) => {
           },
         ],
       });
+      const Entries = await Entry.findAll({
+        where: { timesheetId: data.id },
+        include: [
+          {
+            model: Task,
+          },
+          { model: Project },
+        ],
+      });
+      res.status(200).json({ ...data.dataValues, Entries: Entries });
     } else {
       const data = await Timesheet.findByPk(id, {
         where: { employeeId: req.user.id },
@@ -85,18 +97,17 @@ export const getTimesheetById = async (req, res) => {
           },
         ],
       });
+      const Entries = await Entry.findAll({
+        where: { timesheetId: data.id },
+        include: [
+          {
+            model: Task,
+          },
+          { model: Project },
+        ],
+      });
+      res.status(200).json({ ...data.dataValues, Entries: Entries });
     }
-    const Entries = await Entry.findAll({
-      where: { timesheetId: data.id },
-      include: [
-        {
-          model: Task,
-        },
-        { model: Project },
-      ],
-    });
-    console.log(Entries);
-    res.status(200).json({ ...data.dataValues, Entries: Entries });
   } catch (err) {
     res.status(500).json({
       message: "Error retrieving Timesheet with id=" + id,
