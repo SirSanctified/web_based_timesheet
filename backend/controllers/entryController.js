@@ -50,6 +50,7 @@ export async function getEntries(req, res) {
           },
         ],
       });
+      res.status(200).json(entries);
     } else {
       const entries = await Entry.findAll({
         include: [
@@ -71,8 +72,8 @@ export async function getEntries(req, res) {
           },
         ],
       });
+      res.status(200).json(entries);
     }
-    res.status(200).json(entries);
   } catch (err) {
     res
       .status(404)
@@ -101,16 +102,17 @@ export async function getEntryById(req, res) {
       ],
     });
     if (
-      req.user.role !== "admin" ||
-      req.user.role !== "approver" ||
-      req.user.id !== entry.Timesheet.employeeId
+      req.user.role === "admin" ||
+      req.user.role === "approver" ||
+      req.user.id === entry.Timesheet.employeeId
     ) {
-      return res
-        .status(403)
-        .json({ error: "You are not allowed to view this timesheet." });
+      return res.status(200).json(entry);
     }
-    res.status(200).json(entry);
+    res
+      .status(403)
+      .json({ error: "You are not allowed to view this timesheet." });
   } catch (err) {
+    console.log(err);
     res
       .status(404)
       .json({ error: err.message || "Something went wrong with the request" });
@@ -126,15 +128,19 @@ export async function updateEntry(req, res) {
         model: Timesheet,
       },
     });
-    if (req.user.role !== "admin" || req.user.id !== entry.Timesheet.employeeId)
-      return res
-        .status(403)
-        .json({ error: "You are not allowed to edit this timesheet." });
-    const updatedEntry = await Entry.update(
-      { hours, date, timesheetId, taskId, projectId },
-      { where: { id } }
-    );
-    res.status(200).json(updatedEntry);
+    if (
+      req.user.role === "admin" ||
+      req.user.id === entry.Timesheet.employeeId
+    ) {
+      const updatedEntry = await Entry.update(
+        { hours, date, timesheetId, taskId, projectId },
+        { where: { id } }
+      );
+      return res.status(200).json(updatedEntry);
+    }
+    res
+      .status(403)
+      .json({ error: "You are not allowed to edit this timesheet." });
   } catch (err) {
     res
       .status(400)
@@ -150,12 +156,16 @@ export async function deleteEntry(req, res) {
         model: Timesheet,
       },
     });
-    if (req.user.role !== "admin" || req.user.id !== entry.Timesheet.employeeId)
-      return res
-        .status(403)
-        .json({ error: "You are not allowed to delete this timesheet." });
-    await Entry.destroy({ where: { id } });
-    res.status(204);
+    if (
+      req.user.role === "admin" ||
+      req.user.id === entry.Timesheet.employeeId
+    ) {
+      await Entry.destroy({ where: { id } });
+      res.status(204);
+    }
+    res
+      .status(403)
+      .json({ error: "You are not allowed to delete this timesheet." });
   } catch (err) {
     res
       .status(400)

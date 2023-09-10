@@ -1,5 +1,6 @@
 import { Form, redirect, useActionData } from "react-router-dom";
 import { resetPassword } from "../../api";
+import PasswordInput from "../../components/PasswordInput";
 
 const ResetPassword = () => {
   const errors = useActionData();
@@ -14,43 +15,25 @@ const ResetPassword = () => {
       </p>
       <Form method="post" className="w-full md:w-2/3 lg:w-1/2">
         <p className="flex flex-col w-full gap-1">
-          <label htmlFor="email">New Password:</label>
-          <input
-            type="password"
+          <PasswordInput
+            label="New Password:"
             name="password"
-            id="password"
             placeholder="Enter your new password"
-            required
-            className={`rounded-sm border p-2 w-full focus:border-gray-900 focus-visible:outline-none ${
-              errors?.password ? "border-red-500" : " border-gray-500"
-            }`}
+            error={errors?.password}
           />
-          {errors?.password && (
-            <span className="text-red-500">{errors.password}</span>
-          )}
         </p>
         <p className="flex flex-col w-full gap-1">
-          <label htmlFor="confirmPassword">Confirm Your Password:</label>
-          <input
-            type="password"
+          <PasswordInput
+            label="Confirm Your Password:"
             name="confirmPassword"
-            id="confirmPassword"
             placeholder="Confirm your password"
-            required
-            className={`rounded-sm border p-2 w-full focus:border-gray-900 focus-visible:outline-none ${
-              errors?.confirmPassword ? "border-red-500" : " border-gray-500"
-            }`}
+            error={errors?.confirmPassword}
           />
-          {errors?.confirmPassword && (
-            <span className="text-red-500">{errors.confirmPassword}</span>
-          )}
         </p>
         <button className="mt-4 py-2 w-full rounded-sm text-white text-center bg-blue-700 hover:bg-blue-950 transition-all ease-linear duration-500">
           Reset Password
         </button>
-        {errors?.form && (
-            <span className="text-red-500">{errors.form}</span>
-          ) }
+        {errors?.form && <span className="text-red-500">{errors.form}</span>}
       </Form>
     </section>
   );

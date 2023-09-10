@@ -2,6 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { insertProject } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import SelectStatus from "../../components/SelectStatus";
+import { status } from "../../constants";
+import DateInput from "../../components/DateInput";
+import Description from "../../components/DescriptionInput";
+import TextInput from "../../components/TextInput";
 
 const AddProject = () => {
   const [errors, setErrors] = useState({});
@@ -66,130 +71,83 @@ const AddProject = () => {
       )}
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="projectName" className="text-[18px] mb-1">
-            Project Name:
-          </label>
-          <input
-            type="text"
-            id="projectName"
+          <TextInput
             name="projectName"
+            label="Project Name:"
             value={project.projectName}
             placeholder="Project Name"
-            onChange={(e) =>
+            handleChange={(e) =>
               setProject((prev) => ({ ...prev, projectName: e.target.value }))
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.projectName}
           />
-          {errors?.projectName && (
-            <span className="text-red-500">{errors.projectName}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="projectCode" className="text-[18px] mb-1">
-            Project Code
-          </label>
-          <input
-            type="text"
-            id="projectCode"
+          <TextInput
+            label="Project Code:"
             name="projectCode"
             value={project.projectCode}
             placeholder="Project Code"
-            onChange={(e) =>
+            handleChange={(e) =>
               setProject((prev) => ({ ...prev, projectCode: e.target.value }))
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.projectCode}
           />
-          {errors?.projectCode && (
-            <span className="text-red-500">{errors.projectCode}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="projectDescription" className="text-[18px] mb-1">
-            Project Description (optional):
-          </label>
-          <textarea
-            id="projectDescription"
+          <Description
             name="projectDescription"
+            label="Project Description (optional):"
             value={project.projectDescription}
-            onChange={(e) =>
+            handleChange={(e) =>
               setProject((prev) => ({
                 ...prev,
                 projectDescription: e.target.value,
               }))
             }
             placeholder="Project Description"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.projectDescription}
           />
-          {errors?.projectDescription && (
-            <span className="text-red-500">{errors.projectDescription}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="projectStartDate" className="text-[18px] mb-1">
-            Project Start Date
-          </label>
-          <input
-            type="date"
-            id="projectStartDate"
+          <DateInput
+            label="Project Start Date"
             name="projectStartDate"
             value={project.projectStartDate}
-            onChange={(e) =>
+            handleChange={(e) =>
               setProject((prev) => ({
                 ...prev,
                 projectStartDate: e.target.value,
               }))
             }
-            placeholder="project projectStartDate"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.projectStartDate}
           />
-          {errors?.projectStartDate && (
-            <span className="text-red-500">{errors.projectStartDate}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="projectEndDate" className="text-[18px] mb-1">
-            Project End Date
-          </label>
-          <input
-            type="date"
-            id="projectEndDate"
+          <DateInput
+            label="Project End Date"
             name="projectEndDate"
             value={project.projectEndDate}
-            onChange={(e) =>
+            handleChange={(e) =>
               setProject((prev) => ({
                 ...prev,
                 projectEndDate: e.target.value,
               }))
             }
-            placeholder="project projectEndDate"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.projectEndDate}
           />
-          {errors?.projectEndDate && (
-            <span className="text-red-500">{errors.projectEndDate}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="projectStatus" className="text-[18px] mb-1">
-            Project Status:
-          </label>
-          <select
-            id="projectStatus"
+          <SelectStatus
+            label="Project Status:"
             name="projectStatus"
             value={project.projectStatus}
-            onChange={(e) =>
+            optionValues={status}
+            handlechange={(e) =>
               setProject((prev) => ({ ...prev, projectStatus: e.target.value }))
             }
-            placeholder="project projectStatus"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
-          >
-            <option value="on hold">On Hold</option>
-            <option value="in progress">In Progress</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="completed">Completed</option>
-          </select>
-          {errors?.projectStatus && (
-            <span className="text-red-500">{errors.projectStatus}</span>
-          )}
+            error={errors?.projectStatus}
+          />
         </p>
         <button
           type="submit"

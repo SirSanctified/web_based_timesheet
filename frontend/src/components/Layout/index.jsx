@@ -7,7 +7,9 @@ const Layout = () => {
     <>
     <main className="flex items-start gap-4 max-w-[100vw]">
       <Nav />
-      <Outlet />
+      <div className="w-[100%] flex flex-col items-center justify-center">
+        <Outlet />
+      </div>
     </main>
       <Footer />
     </>

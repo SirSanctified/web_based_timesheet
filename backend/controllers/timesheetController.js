@@ -150,7 +150,7 @@ export const deleteTimesheet = async (req, res) => {
         where: { id: id },
       });
     } else {
-      res
+      return res
         .status(403)
         .json({ error: "You are not allowed to edit this timesheet." });
     }
@@ -186,7 +186,7 @@ export const approveTimesheet = async (req, res) => {
   const { status } = req.body;
   try {
     if (req.user.role !== "admin" || req.user.role !== "approver") {
-      res
+      return res
         .status(403)
         .json({ error: "You are not allowed to edit this timesheet." });
     }

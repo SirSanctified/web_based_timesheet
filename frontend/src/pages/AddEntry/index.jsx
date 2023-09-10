@@ -7,6 +7,9 @@ import {
   getAllTasks,
 } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import Select from "../../components/Select";
+import DateInput from "../../components/DateInput";
+import NumberInput from "../../components/NumberInput";
 
 const AddEntry = () => {
   const [errors, setErrors] = useState({});
@@ -73,135 +76,65 @@ const AddEntry = () => {
       </h1>
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="timesheetId" className="text-[18px] mb-1">
-            Entry For Timesheet:
-          </label>
-          <select
+          <Select
+            label="Entry For Timesheet:"
             name="timesheetId"
             value={entry.timesheetId}
-            onChange={(e) =>
+            handleChange={(e) =>
               setEntry((prev) => ({ ...prev, timesheetId: e.target.value }))
             }
-            id="timesheetId"
-            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
-          >
-            <option value="" className="px-2 py-2 border border-gray-500">
-              Select parent Timesheet
-            </option>
-            {timesheets &&
-              !timesheets.error &&
-              Array.from(timesheets)?.map((timesheet) => (
-                <option
-                  key={timesheet.id}
-                  value={timesheet.id}
-                  className="px-2 py-2 border border-gray-500"
-                >
-                  on {timesheet.date} for {timesheet.hours}
-                </option>
-              ))}
-          </select>
-          {errors?.timesheetId && (
-            <span className="text-red-500">{errors.timesheetId}</span>
-          )}
+            optionsArray={timesheets}
+            defaultOption="Select parent Timesheet"
+            error={timesheets.error}
+          />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="projectId" className="text-[18px] mb-1">
-            Entry For Project:
-          </label>
-          <select
+          <Select
+            label="Entry For Project:"
             name="projectId"
             value={entry.projectId}
-            onChange={(e) =>
+            handleChange={(e) =>
               setEntry((prev) => ({ ...prev, projectId: e.target.value }))
             }
-            id="projectId"
-            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
-          >
-            <option value="" className="px-2 py-2 border border-gray-500">
-              Select project
-            </option>
-            {projects &&
-              !projects.error &&
-              Array.from(projects)?.map((project) => (
-                <option
-                  key={project.id}
-                  value={project.id}
-                  className="px-2 py-2 border border-gray-500"
-                >
-                  {project.projectName} - {project.projectCode}
-                </option>
-              ))}
-          </select>
-          {errors?.projectId && (
-            <span className="text-red-500">{errors.projectId}</span>
-          )}
+            optionsArray={projects}
+            defaultOption="Select project"
+            error={projects.error}
+          />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="task" className="text-[18px] mb-1">
-            Entry For Task:
-          </label>
-          <select
+          <Select
             name="taskId"
+            label="Entry For Task:"
             value={entry.taskId}
-            onChange={(e) =>
+            handleChange={(e) =>
               setEntry((prev) => ({ ...prev, taskId: e.target.value }))
             }
-            id="taskId"
-            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
-          >
-            <option value="" className="px-2 py-2 border border-gray-500">
-              Select Task
-            </option>
-            {tasks &&
-              !tasks.error &&
-              Array.from(tasks)?.map((task) => (
-                <option
-                  key={task.id}
-                  value={task.id}
-                  className="px-2 py-2 border border-gray-500"
-                >
-                  {task.taskName}
-                </option>
-              ))}
-          </select>
-          {errors?.taskId && (
-            <span className="text-red-500">{errors.taskId}</span>
-          )}
+            optionsArray={tasks}
+            defaultOption="Select task"
+            error={tasks.error}
+          />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="date" className="text-[18px] mb-1">
-            Entry Date
-          </label>
-          <input
-            type="date"
-            id="date"
+          <DateInput
+            label="Entry Date"
             name="date"
             value={entry.date}
-            onChange={(e) =>
+            handleChange={(e) =>
               setEntry((prev) => ({ ...prev, date: e.target.value }))
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.date}
           />
-          {errors?.date && <span className="text-red-500">{errors.date}</span>}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="hours" className="text-[18px] mb-1">
-            Entry Hours
-          </label>
-          <input
-            type="number"
-            id="hours"
-            name="hours"
+          <NumberInput
+            label="Entry Hours"
             value={entry.hours}
-            onChange={(e) =>
+            handleChange={(e) =>
               setEntry((prev) => ({ ...prev, hours: parseInt(e.target.value) }))
             }
             placeholder="Timesheet hours"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.hours}
           />
-          {errors?.hours && (
-            <span className="text-red-500">{errors.hours}</span>
-          )}
         </p>
         <button
           type="submit"

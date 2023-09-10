@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
   return (
-    <main className="flex mr-4 flex-col h-screen overflow-scroll no-scrollbar">
+    <main className="flex mr-4 flex-col h-screen overflow-scroll no-scrollbar max-w-lg-[1200px] lg:items-center">
       <section className="mt-16 flex flex-col lg:flex-row gap-4 items-start lg:items-center">
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-blue-950">Manage</h1>
@@ -37,7 +37,7 @@ const Home = () => {
           <h1 className="text-lg font-bold text-blue-950">
             Enjoy the flexibility
           </h1>
-          <p className="text-normal font-medium mt-3 text-black">
+          <p className="text-normal font-medium mt-3 text-black max-w-[60ch]">
             Embrace the freedom to work anywhere, anytime, on any device; manage
             your workday from wherever you are. No more endless paperwork, no
             more chasing timesheets, no more hassle. Enjoy the flexibility, feel
@@ -57,7 +57,7 @@ const Home = () => {
           <h1 className="text-lg font-bold text-blue-950">
             Manage your employees
           </h1>
-          <p className="text-normal font-medium mt-3 text-black">
+          <p className="text-normal font-medium mt-3 text-black max-w-[60ch]">
             Tired of managing your employees&#39; timesheets, projects, tasks,
             and entries in different places? Manage them all in one place with
             Manage. Let your employees focus on what they do best, and let

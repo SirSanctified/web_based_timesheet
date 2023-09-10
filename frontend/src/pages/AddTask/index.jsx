@@ -3,6 +3,12 @@ import { useEffect, useState } from "react";
 import { MultiSelect } from "react-multi-select-component";
 import { getAllProjects, insertTask, getAllEmployees } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import TextInput from "../../components/TextInput";
+import Description from "../../components/DescriptionInput";
+import DateInput from "../../components/DateInput";
+import SelectStatus from "../../components/SelectStatus";
+import Select from "../../components/Select";
+import { status } from "../../constants";
 
 const AddTask = () => {
   const [errors, setErrors] = useState({});
@@ -77,36 +83,17 @@ const AddTask = () => {
       </h1>
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="projectId" className="text-[18px] mb-1">
-            Task For Project:
-          </label>
-          <select
+          <Select
+            label="Task For Project:"
             name="projectId"
             value={task.projectId}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTask((prev) => ({ ...prev, projectId: e.target.value }))
             }
-            id="projectId"
-            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
-          >
-            <option value="" className="px-2 py-2 border border-gray-500">
-              Select parent project
-            </option>
-            {projects &&
-              !projects.error &&
-              Array.from(projects)?.map((project) => (
-                <option
-                  key={project.id}
-                  value={project.id}
-                  className="px-2 py-2 border border-gray-500"
-                >
-                  {project.projectName} - {project.projectCode}
-                </option>
-              ))}
-          </select>
-          {errors?.projectId && (
-            <span className="text-red-500">{errors.projectId}</span>
-          )}
+            optionsArray={projects}
+            error={errors?.projectId}
+            defaultOption="Select parent project"
+          />
         </p>
         <p className="flex flex-col">
           <label htmlFor="taskEmployees" className="text-[18px] mb-1">
@@ -114,7 +101,7 @@ const AddTask = () => {
           </label>
           <MultiSelect
             options={options}
-            value={taskEmployees}
+            value={task.taskEmployees}
             onChange={setTaskEmployees}
             labelledBy="Select Employees"
           />
@@ -123,100 +110,62 @@ const AddTask = () => {
           )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="taskName" className="text-[18px] mb-1">
-            Task Name
-          </label>
-          <input
-            type="text"
-            id="taskName"
+          <TextInput
+            label="Task Name"
             name="taskName"
             value={task.taskName}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTask((prev) => ({ ...prev, taskName: e.target.value }))
             }
             placeholder="Task Name"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.taskName}
           />
-          {errors?.taskName && (
-            <span className="text-red-500">{errors.taskName}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="taskDescription" className="text-[18px] mb-1">
-            Task Description
-          </label>
-          <textarea
-            id="taskDescription"
+          <Description
+            label="Task Description"
             name="taskDescription"
             value={task.taskDescription}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTask((prev) => ({ ...prev, taskDescription: e.target.value }))
             }
             placeholder="Task Description"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.taskDescription}
           />
-          {errors?.taskDescription && (
-            <span className="text-red-500">{errors.taskDescription}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="taskStartDate" className="text-[18px] mb-1">
-            Task Start Date
-          </label>
-          <input
-            type="date"
-            id="taskStartDate"
+          <DateInput
+            label="Task Start Date"
             name="taskStartDate"
             value={task.taskStartDate}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTask((prev) => ({ ...prev, taskStartDate: e.target.value }))
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.taskStartDate}
           />
-          {errors?.taskStartDate && (
-            <span className="text-red-500">{errors.taskStartDate}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="taskEndDate" className="text-[18px] mb-1">
-            Task End Date
-          </label>
-          <input
-            type="date"
-            id="taskEndDate"
+          <DateInput
+            label="Task End Date"
             name="taskEndDate"
             value={task.taskEndDate}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTask((prev) => ({ ...prev, taskEndDate: e.target.value }))
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.taskEndDate}
           />
-          {errors?.taskEndDate && (
-            <span className="text-red-500">{errors.taskEndDate}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="taskStatus" className="text-[18px] mb-1">
-            Entry Task Status
-          </label>
-          <select
-            id="taskStatus"
+          <SelectStatus
+            label="Entry Task Status"
             name="taskStatus"
             value={task.taskStatus}
-            onChange={(e) =>
+            handlechange={(e) =>
               setTask((prev) => ({ ...prev, taskStatus: e.target.value }))
             }
-            placeholder="Task Status (on hold, in progress, completed, cancelled)"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
-          >
-            <option value="on hold">On Hold</option>
-            <option value="in progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-          {errors?.taskStatus && (
-            <span className="text-red-500">{errors.taskStatus}</span>
-          )}
+            optionValues={status}
+            error={errors?.taskStatus}
+          />
         </p>
         <button
           type="submit"

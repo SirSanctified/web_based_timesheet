@@ -2,6 +2,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { deleteRequestById, getRequestById } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import EmailInput from "../../components/EmailInput";
+import TextInput from "../../components/TextInput";
+import PhoneInput from "../../components/PhoneInput";
 
 const RequestDetail = () => {
   const [request, setRequest] = useState({
@@ -40,80 +43,50 @@ const RequestDetail = () => {
       <h1 className="text-xl text-blue-950 text-center font-black mb-4">
         Employee Registration Request
       </h1>
-      <form onSubmit={() => navigate("/registration-requests/all")} className="md:w-[50%] w-full mx-auto">
+      <form className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="firstName" className="text-[18px] mb-1">
-            First Name:
-          </label>
-          <input
-            type="text"
-            id="firstName"
+          <TextInput
+            label="First Name:"
             name="firstName"
             value={request.firstName}
-            placeholder="Project Name"
-            readOnly
-            onChange={(e) => setRequest((prev) => ({ ...prev, firstName: e.target.value }))}
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            placeholder="Employee First Name"
+            handleChange={(e) => setRequest((prev) => ({...prev, firstName: e.target.value}))}
           />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="lastName" className="text-[18px] mb-1">
-            Last Name
-          </label>
-          <input
-            type="text"
-            id="lastName"
+          <TextInput
+            label="Last Name:"
             name="lastName"
-            readOnly
             value={request.lastName}
-            placeholder="Last Name"
-            onChange={(e) => setRequest((prev) => ({ ...prev, lastName: e.target.value }))}
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            placeholder="Employee Last Name"
+            handleChange={(e) => setRequest((prev) => ({...prev, lastName: e.target.value}))}
           />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="phone" className="text-[18px] mb-1">
-            Phone:
-          </label>
-          <input
-            type="tel"
-            id="phone"
-            readOnly
+          <PhoneInput
+            label="Employee Phone Number:"
             name="phone"
             value={request.phone}
-            onChange={(e) => setRequest((prev) => ({ ...prev, phone: e.target.value }))}
+            handleChange={(e) => setRequest((prev) => ({...prev, phone: e.target.value}))}
             placeholder="Employee Phone Number"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="nationalId" className="text-[18px] mb-1">
-            Employee National ID:
-          </label>
-          <input
-            type="text"
-            id="nationalId"
+          <TextInput
+            label="Employee National ID:"
             name="nationalId"
-            readOnly
             value={request.nationalId}
-            onChange={(e) => setRequest((prev) => ({ ...prev, nationalId: e.target.value }))}
+            handleChange={(e) => setRequest((prev) => ({...prev, nationalId: e.target.value}))}
             placeholder="Employee National ID"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
           />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="email" className="text-[18px] mb-1">
-            Employee Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            readOnly
+          <EmailInput
+            label="Employee Email Address:"
             name="email"
             value={request.email}
-            onChange={(e) => setRequest((prev) => ({ ...prev, email: e.target.value }))}
-            placeholder="Employee Email"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            handleChange={(e) => setRequest((prev) => ({...prev, email:e.target.value}))}
+            placeholder="Employee Email Address"
           />
         </p>
         <div className="flex mt-4 items-center justify-around [w-100%]">

@@ -6,7 +6,7 @@ const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASS;
 const dbHost = process.env.DB_HOST;
 const db = process.env.DB;
-const sequelize = new Sequelize(`mysql://${dbUser}:${dbPassword}@${dbHost}/${db}`);
+const sequelize = new Sequelize(`mysql://${dbUser}:${dbPassword}@${dbHost}/${db}`, {logging: false});
 
 const connectDB = async () => {
   try {

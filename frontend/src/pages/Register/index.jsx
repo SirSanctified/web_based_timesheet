@@ -2,6 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { registerUser } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import TextInput from "../../components/TextInput";
+import PhoneInput from "../../components/PhoneInput";
+import EmailInput from "../../components/EmailInput";
+import PasswordInput from "../../components/PasswordInput";
+import SelectStatus from "../../components/SelectStatus";
+import CheckboxInput from "../../components/CheckboxInput";
+import { roles } from "../../constants";
 
 const Register = () => {
   const [errors, setErrors] = useState({});
@@ -30,8 +37,11 @@ const Register = () => {
       errors.lastName = "The last name is required for this employee";
     }
 
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/.test(password)) {
-      errors.password = "The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character";
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/.test(password)
+    ) {
+      errors.password =
+        "The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character";
     }
 
     if (!/^(\d{1,3}\s?)?0?\d{2}\s?\d{3}\s?\d{4}$/.test(phone)) {
@@ -79,139 +89,83 @@ const Register = () => {
       )}
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="firstName" className="text-[18px] mb-1">
-            First Name:
-          </label>
-          <input
-            type="text"
-            id="firstName"
+          <TextInput
+            label="First Name:"
             name="firstName"
             value={firstName}
-            placeholder="Project Name"
-            onChange={(e) => setFirstName(e.target.value)}
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            placeholder="Employee First Name"
+            handleChange={(e) => setFirstName(e.target.value)}
+            error={errors?.firstName}
           />
-          {errors?.firstName && (
-            <span className="text-red-500">{errors.firstName}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="lastName" className="text-[18px] mb-1">
-            Last Name
-          </label>
-          <input
-            type="text"
-            id="lastName"
+          <TextInput
+            label="Last Name:"
             name="lastName"
             value={lastName}
-            placeholder="Last Name"
-            onChange={(e) => setLastName(e.target.value)}
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            placeholder="Employee Last Name"
+            handleChange={(e) => setLastName(e.target.value)}
+            error={errors?.lastName}
           />
-          {errors?.lastName && (
-            <span className="text-red-500">{errors.lastName}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="phone" className="text-[18px] mb-1">
-            Phone:
-          </label>
-          <input
-            type="tel"
-            id="phone"
+          <PhoneInput
+            label="Employee Phone Number:"
             name="phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            handleChange={(e) => setPhone(e.target.value)}
             placeholder="Employee Phone Number"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.phone}
           />
-          {errors?.phone && (
-            <span className="text-red-500">{errors.phone}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="nationalId" className="text-[18px] mb-1">
-            Employee National ID:
-          </label>
-          <input
-            type="text"
-            id="nationalId"
+          <TextInput
+            label="Employee National ID:"
             name="nationalId"
             value={nationalId}
-            onChange={(e) => setNationalId(e.target.value)}
+            handleChange={(e) => setNationalId(e.target.value)}
             placeholder="Employee National ID"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.nationalId}
           />
-          {errors?.nationalId && (
-            <span className="text-red-500">{errors.nationalId}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="email" className="text-[18px] mb-1">
-            Employee Email
-          </label>
-          <input
-            type="email"
-            id="email"
+          <EmailInput
+            label="Employee Email Address:"
             name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Employee Email"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            handleChange={(e) => setEmail(e.target.value)}
+            placeholder="Employee Email Address"
+            error={errors?.email}
           />
-          {errors?.email && (
-            <span className="text-red-500">{errors.email}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="password" className="text-[18px] mb-1">
-            Password:
-          </label>
-          <input
-            type="password"
-            id="password"
+          <PasswordInput
+            label="Password"
             name="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            handleChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.password}
           />
-          {errors?.password && (
-            <span className="text-red-500">{errors.password}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="role" className="text-[18px] mb-1">
-            Role:
-          </label>
-          <select
+          <SelectStatus
+            label="Role:"
             name="role"
-            id="role"
             value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
-          >
-            <option value="admin">Admin</option>
-            <option value="approver">Approver</option>
-            <option value="general">General</option>
-          </select>
-          </p>
+            handlechange={(e) => setRole(e.target.value)}
+            optionValues={roles}
+          />
+        </p>
         <p className="flex gap-4 mt-4">
-          <label htmlFor="isActive" className="text-[18px] mb-1">
-            Active:
-          </label>
-          <input
-            type="checkbox"
-            id="isActive"
+          <CheckboxInput
+            label="Active"
             name="isActive"
             value={isActive}
             checked={isActive}
-            onClick={() => setIsActive(!isActive)}
-            className="w-8 h-8 border border-gray-500 rounded-sm"
+            handleClick={() => setIsActive(!isActive)}
+            error={errors?.isActive}
           />
-          {errors?.isActive && (
-            <span className="text-red-500">{errors.isActive}</span>
-          )}
         </p>
         <button
           type="submit"

@@ -6,6 +6,8 @@ import {
   updateTimesheetById,
 } from "../../api";
 import { useNavigate, useParams } from "react-router-dom";
+import DateInput from "../../components/DateInput";
+import NumberInput from "../../components/NumberInput";
 
 const TimesheetDetail = () => {
   const [timesheet, setTimesheet] = useState();
@@ -69,7 +71,6 @@ const TimesheetDetail = () => {
             <label htmlFor="employeeId">Employee</label>
             <select
               name="employeeId"
-              id="employeeId"
               value={timesheet.employeeId}
               onChange={() => {}}
               className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
@@ -79,37 +80,23 @@ const TimesheetDetail = () => {
                   </option>
             </select>
           </div>
-          <div className="flex flex-col items-start w-[100%]">
-            <label
-              htmlFor="date"
-            >
-              Date
-            </label>
-            <input
-              type="date"
+          <p className="flex flex-col">
+            <DateInput
+            label="Date:"
               name="date"
-              id="date"
               value={timesheet.date}
-              onChange={(e) => setTimesheet(prev => prev = {...prev, date: e.target.value})}
-              className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
+              handleChange={(e) => setTimesheet(prev => prev = {...prev, date: e.target.value})}
             />
-          </div>
-          <div className="flex flex-col items-start w-[100%]">
-            <label
-              htmlFor="hours"
-            >
-              Hours
-            </label>
-            <input
-              type="number"
+          </p>
+          <p className="flex flex-col ">
+            <NumberInput
               name="hours"
-              id="hours"
+              label="Hours"
               value={timesheet.hours}
-              onChange={(e) => setTimesheet(prev => prev = {...prev, hours: parseInt(e.target.value)})}
-              className="mb-4 border border-gray-500 rounded-sm px-4 py-2 w-[100%]"
+              handleChange={(e) => setTimesheet(prev => prev = {...prev, hours: parseInt(e.target.value)})}
             />
-          </div>
-          <div className="flex items-center justify-around [w-100%]">
+          </p>
+          <div className="flex items-center justify-around [w-100%] mt-4">
             <button
               type="submit"
               className="bg-blue-700 hover:bg-blue-900 text-white rounded-sm px-4 py-2"

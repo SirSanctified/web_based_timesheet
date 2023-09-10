@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getAllEmployees, insertTimesheet } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import Select from "../../components/Select";
+import DateInput from "../../components/DateInput";
+import NumberInput from "../../components/NumberInput";
 
 const AddTimesheet = () => {
   const [errors, setErrors] = useState({});
@@ -60,74 +63,43 @@ const AddTimesheet = () => {
       </h1>
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="employeeId" className="text-[18px] mb-1">
-            Timesheet For:
-          </label>
-          <select
+          <Select
+            label="Timesheet For:"
             name="employeeId"
             value={timesheet.employeeId}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTimesheet((prev) => ({ ...prev, employeeId: e.target.value }))
             }
-            id="employeeId"
-            className="mb-1 px-2 py-2 border border-gray-500 rounded-sm"
-          >
-            <option value="" className="px-2 py-2 border border-gray-500">
-              Select Who&#39;s Timesheet Is This
-            </option>
-            {employees &&
-              typeof employees === "object" &&
-              Array.from(employees)?.map((employee) => (
-                <option
-                  key={employee.id}
-                  value={employee.id}
-                  className="px-2 py-2 border border-gray-500"
-                >
-                  {employee.firstName} {employee.lastName}
-                </option>
-              ))}
-          </select>
-          {errors?.employeeId && (
-            <span className="text-red-500">{errors.employeeId}</span>
-          )}
+            defaultOption="Select Who&#39;s Timesheet Is This"
+            optionsArray={employees}
+            error={errors?.employeeId}
+          />
         </p>
         <p className="flex flex-col">
-          <label htmlFor="date" className="text-[18px] mb-1">
-            Timesheet Date
-          </label>
-          <input
-            type="date"
-            id="date"
+          <DateInput
+            label="Timesheet Date"
             name="date"
             value={timesheet.date}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTimesheet((prev) => ({ ...prev, date: e.target.value }))
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.date}
           />
-          {errors?.date && <span className="text-red-500">{errors.date}</span>}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="hours" className="text-[18px] mb-1">
-            Timesheet Hours
-          </label>
-          <input
-            type="number"
-            id="hours"
+          <NumberInput
+            label="Timesheet Hours"
             name="hours"
             value={timesheet.hours}
-            onChange={(e) =>
+            handleChange={(e) =>
               setTimesheet((prev) => ({
                 ...prev,
                 hours: parseInt(e.target.value),
               }))
             }
             placeholder="Timesheet hours"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.hours}
           />
-          {errors?.hours && (
-            <span className="text-red-500">{errors.hours}</span>
-          )}
         </p>
         <button
           type="submit"

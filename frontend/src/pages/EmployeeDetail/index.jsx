@@ -6,6 +6,12 @@ import {
   getEmployeeById,
 } from "../../api";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import TextInput from "../../components/TextInput";
+import SelectStatus from "../../components/SelectStatus";
+import { roles } from "../../constants";
+import PhoneInput from "../../components/PhoneInput";
+import EmailInput from "../../components/EmailInput";
+import CheckboxInput from "../../components/CheckboxInput";
 
 const EmployeeDetail = () => {
   const [errors, setErrors] = useState({});
@@ -92,134 +98,94 @@ const EmployeeDetail = () => {
       )}
       <form onSubmit={handleSubmit} className="md:w-[50%] w-full mx-auto">
         <p className="flex flex-col">
-          <label htmlFor="firstName" className="text-[18px] mb-1">
-            First Name:
-          </label>
-          <input
-            type="text"
-            id="firstName"
+          <TextInput
+            label="First Name:"
             name="firstName"
             value={employee?.firstName}
-            placeholder="Project Name"
-            onChange={(e) =>
-              setEmployee((prev) => prev = { ...prev, firstName: e.target.value })
+            placeholder="Employee First Name"
+            handleChange={(e) =>
+              setEmployee(
+                (prev) => (prev = { ...prev, firstName: e.target.value })
+              )
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.firstName}
           />
-          {errors?.firstName && (
-            <span className="text-red-500">{errors.firstName}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="lastName" className="text-[18px] mb-1">
-            Last Name
-          </label>
-          <input
-            type="text"
-            id="lastName"
+          <TextInput
+            label="Last Name:"
             name="lastName"
             value={employee?.lastName}
             placeholder="Last Name"
-            onChange={(e) =>
-              setEmployee((prev) => prev = { ...prev, lastName: e.target.value })
+            handleChange={(e) =>
+              setEmployee(
+                (prev) => (prev = { ...prev, lastName: e.target.value })
+              )
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.lastName}
           />
-          {errors?.lastName && (
-            <span className="text-red-500">{errors.lastName}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="phone" className="text-[18px] mb-1">
-            Phone:
-          </label>
-          <input
-            type="tel"
-            id="phone"
+          <PhoneInput
+            label="Employee Phone Number:"
             name="phone"
             value={employee?.phone}
-            onChange={(e) =>
-              setEmployee((prev) => prev = {...prev, phone: e.target.value})
+            handleChange={(e) =>
+              setEmployee((prev) => (prev = { ...prev, phone: e.target.value }))
             }
             placeholder="Employee Phone Number"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.phone}
           />
-          {errors?.phone && (
-            <span className="text-red-500">{errors.phone}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="nationalId" className="text-[18px] mb-1">
-            Employee National ID:
-          </label>
-          <input
-            type="text"
-            id="nationalId"
+          <TextInput
+            label="Employee National ID:"
             name="nationalId"
             value={employee?.nationalId}
-            onChange={(e) =>
-              setEmployee((prev) => prev = { ...prev, nationalId: e.target.value })
+            handleChange={(e) =>
+              setEmployee(
+                (prev) => (prev = { ...prev, nationalId: e.target.value })
+              )
             }
             placeholder="Employee National ID"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.nationalId}
           />
-          {errors?.nationalId && (
-            <span className="text-red-500">{errors.nationalId}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="email" className="text-[18px] mb-1">
-            Employee Email
-          </label>
-          <input
-            type="email"
-            id="email"
+          <EmailInput
+            label="Employee Email:"
             name="email"
             value={employee?.email}
-            onChange={(e) =>
-              setEmployee((prev) => prev = { ...prev, email: e.target.value })
+            handleChange={(e) =>
+              setEmployee((prev) => (prev = { ...prev, email: e.target.value }))
             }
             placeholder="Employee Email"
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
+            error={errors?.email}
           />
-          {errors?.email && (
-            <span className="text-red-500">{errors.email}</span>
-          )}
         </p>
         <p className="flex flex-col">
-          <label htmlFor="role" className="text-[18px] mb-1">
-            Role:
-          </label>
-          <select
-            name="role"
-            id="role"
+          <SelectStatus
+            label="Employee Role:"
             value={employee?.role}
-            onChange={(e) =>
-              setEmployee((prev) => prev = { ...prev, role: e.target.value })
+            handlechange={(e) =>
+              setEmployee((prev) => (prev = { ...prev, role: e.target.value }))
             }
-            className="px-2 py-1 border border-gray-500 rounded-sm text-[16px]"
-          >
-            <option value="admin">Admin</option>
-            <option value="approver">Approver</option>
-            <option value="general">General</option>
-          </select>
+            optionValues={roles}
+          />
         </p>
         <p className="flex gap-4 mt-4">
-          <label htmlFor="isActive" className="text-[18px] mb-1">
-            Active:
-          </label>
-          <input
-            type="checkbox"
-            id="isActive"
+          <CheckboxInput
+            label="Active:"
             name="isActive"
             value={employee?.isActive}
             checked={employee?.isActive}
-            onClick={() => setEmployee((prev) => prev = { ...prev, isActive: !prev.isActive })}
-            className="w-8 h-8 border border-gray-500 rounded-sm"
+            handleClick={() =>
+              setEmployee(
+                (prev) => (prev = { ...prev, isActive: !prev.isActive })
+              )
+            }
+            error={errors?.isActive}
           />
-          {errors?.isActive && (
-            <span className="text-red-500">{errors.isActive}</span>
-          )}
         </p>
         <div className="flex items-center justify-around mt-4 [w-100%]">
           <button
